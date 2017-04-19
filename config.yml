@@ -33,5 +33,6 @@ local:
   give-other-success: '&6You have given &b{PLAYER} &r{AMOUNT} {TYPE}'
   gave-success: '&6You have received &r{AMOUNT} {TYPE} &6from &b{PLAYER}'
   target-not-online: '&cThe player &r{PLAYER} &cis not online or does not exist.'
+  toss-cooldown: '&cYou must wait &r{COUNT} seconds &cbefore tossing another &r{TYPE}'
   problem-removing-itmes: '&cThere was a problem removing some items from your inventory!'
   free: '&2FREE&r'

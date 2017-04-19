@@ -5,19 +5,19 @@ import java.io.File;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import wa.was.blastradius.events.TNTRemovedEvent;
-import wa.was.blastradius.events.TNTSpawnEvent;
 import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.events.AnvilNameEvent;
 import wa.was.blastradius.events.TNTExplosionEvent;
 import wa.was.blastradius.events.TNTFallingEvent;
-import wa.was.blastradius.events.TNTInteractEvent;
+import wa.was.blastradius.events.TNTInteractOrTossEvent;
 //import wa.was.blastradius.events.TNTPrimeEvent;
-import wa.was.blastradius.events.TNTRedstoneEvent;
+//import wa.was.blastradius.events.TNTRedstoneEvent;
 import wa.was.blastradius.events.TNTPlaceEvent;
 import wa.was.blastradius.managers.BlastEffectManager;
 import wa.was.blastradius.managers.PotionEffectsManager;
 import wa.was.blastradius.managers.TNTEffectsManager;
 import wa.was.blastradius.managers.TNTLocationManager;
+import wa.was.blastradius.nms.TNTPrimeSpawn_v1_11_R1;
 import wa.was.blastradius.utils.ConsoleColor;
 
 /*************************
@@ -79,6 +79,8 @@ public class BlastRadius extends JavaPlugin {
 		TNTEffects = TNTEffectsManager.getInstance();
 		blastManager = BlastEffectManager.getinstance(this);
 		
+		new TNTPrimeSpawn_v1_11_R1();
+		
 		if ( getConfig().getBoolean("show-player-messages") ) {
 			doMessages = true;
 		}
@@ -96,9 +98,8 @@ public class BlastRadius extends JavaPlugin {
 		//getServer().getPluginManager().registerEvents(new TNTPrimeEvent(this), this);
 		getServer().getPluginManager().registerEvents(new TNTPlaceEvent(this), this);
 		getServer().getPluginManager().registerEvents(new TNTFallingEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTSpawnEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTInteractEvent(), this);
+		//getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this);
+		getServer().getPluginManager().registerEvents(new TNTInteractOrTossEvent(this), this);
 		getServer().getPluginManager().registerEvents(new AnvilNameEvent(this), this);
 		
 		getCommand("blastr").setExecutor(new OnCommand(this));
@@ -107,6 +108,10 @@ public class BlastRadius extends JavaPlugin {
 	
 	public static BlastRadius getBlastRadiusInstance() {
 		return (BlastRadius) instance;
+	}
+	
+	public static JavaPlugin getBlastRadiusPluginInstance() {
+		return instance;
 	}
 	
 	public TNTLocationManager getTNTLocationManager() {

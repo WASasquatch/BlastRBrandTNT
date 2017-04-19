@@ -52,8 +52,11 @@ tnt-tossable-height: 3
 # Tossable range
 # This is how far a tossable can be thrown
 # Max range 1 - 50
-# Default: 7
-tnt-tossable-range: 7
+# Default: 5
+tnt-tossable-range: 5
+
+# Tossable Cooldwon in Seconds
+tnt-tossable-cooldown: 10
 
 # Items Display Name
 # Default: TNT

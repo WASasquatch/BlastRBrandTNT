@@ -1,6 +1,9 @@
 package wa.was.blastradius.events;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -43,14 +46,20 @@ import wa.was.blastradius.managers.TNTLocationManager;
  *	
  *************************/
 
-public class TNTInteractEvent implements Listener {
+public class TNTInteractOrTossEvent implements Listener {
+	
+	private JavaPlugin plugin;
 	
 	private TNTLocationManager TNTManager;
 	private TNTEffectsManager TNTEffects;
 	
-	public TNTInteractEvent() {
+	private Map<UUID, Long> cooldowns;
+	
+	public TNTInteractOrTossEvent(JavaPlugin plugin) {
+		this.plugin = plugin;
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
 		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
+		cooldowns = new HashMap<UUID, Long>();
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
@@ -58,7 +67,7 @@ public class TNTInteractEvent implements Listener {
 		
 		if ( e.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
 				&& e.getClickedBlock().getType().equals(Material.TNT)
-					&& e.getItem().getType().equals(Material.FLINT_AND_STEEL)
+					&& ( e.getItem() != null && e.getItem().getType().equals(Material.FLINT_AND_STEEL) )
 						&& TNTManager.containsLocation(e.getClickedBlock().getLocation()) ) {
 			
 			Location location = e.getClickedBlock().getLocation();
@@ -79,10 +88,8 @@ public class TNTInteractEvent implements Listener {
 		
 		if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) ) {
 			
-			BlastRadius plugin = BlastRadius.getBlastRadiusInstance();
-			
 			if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
-				e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', ((JavaPlugin)plugin).getConfig().getString("local.no-permission")));
+				e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.no-permission")));
 				return;
 			}
 			
@@ -94,17 +101,26 @@ public class TNTInteractEvent implements Listener {
 				
 				if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
 					
-					if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
-						e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', ((JavaPlugin)plugin).getConfig().getString("local.no-permission")));
-						return;
-					}
-					
 					String type = TNTEffects.displayNameToType(meta.getDisplayName());
 					Map<String, Object> effect = TNTEffects.getEffect(type);
 					
 					if ( effect != null && (boolean) effect.get("tntTossable") ) {
+						
+						if ( cooldowns.containsKey(e.getPlayer().getUniqueId()) ) {
+							if ( cooldowns.get(e.getPlayer().getUniqueId()) > System.currentTimeMillis() ) {
+								long timeDiff = TimeUnit.MILLISECONDS.toMinutes(cooldowns.get(e.getPlayer().getUniqueId()) - System.currentTimeMillis());
+								e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', 
+											plugin.getConfig().getString("local.toss-cooldown")
+											.replace("{COUNT}", ""+timeDiff)
+											.replace("{TYPE}", (String) effect.get("displayName"))));
+								return;
+							} else if ( cooldowns.get(e.getPlayer().getUniqueId()) < System.currentTimeMillis() ) {
+								cooldowns.remove(e.getPlayer().getUniqueId());
+							}
+						}
 				
 						TNTManager.playerTossTNT(effect, e.getPlayer(), (int) effect.get("tossRange"));
+						cooldowns.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + (int) effect.get("tossCooldown") * 1000);
 						
 					}
 				

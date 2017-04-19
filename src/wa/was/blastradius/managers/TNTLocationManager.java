@@ -410,6 +410,7 @@ public class TNTLocationManager {
 										(Sound) effect.get("soundEffect"), 
 										(float) effect.get("soundEffectPitch"),
 										tossed);
+	    tnt.setVelocity(tnt.getVelocity().add(d).multiply(1.0));
 	    return tnt;
 	    
 	}

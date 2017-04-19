@@ -227,6 +227,12 @@ public class TNTEffectsManager {
 				Bukkit.getServer().getLogger().warning("TNT Tossable Range out of Range: "+effect.getInt("tnt-tossable-range")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("tossRange", 7);
 			}
+			if ( effect.getInt("tnt-tossable-cooldown", 10) < 1 ) {
+				Bukkit.getServer().getLogger().warning("TNT Tossable Cooldown must be above 1. Value found: "+effect.getInt("tnt-tossable-cooldown")+" for TNT Effect: "+effectName+". Defaulting...");
+				effectInfo.put("tossCooldown", 10);
+			} else {
+				effectInfo.put("tossCooldown", effect.getInt("tnt-tossable-cooldown", 10));
+			}
 			effectInfo.put("doPotions", effect.getBoolean("potion-effect", true));
 			effectInfo.put("consecPotions", effect.getBoolean("consecutive-potion-effects", false));
 			effectInfo.put("showPotionMsg", effect.getBoolean("show-potion-message", true));
