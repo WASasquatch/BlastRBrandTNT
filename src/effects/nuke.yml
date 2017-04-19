@@ -7,6 +7,16 @@
 # This MUST be the same as the filename, in uppercase
 effect-name: NUKE
 
+# Items Display Name
+# Default: TNT
+display-name: '&cNuke &7&o(Big One)'
+
+# Items Lore
+# Default: null
+lore:
+ - '&7A large nuclear warhead'
+ - '&cNuke &7&o(aka the Big One)'
+
 # Vault Cost
 # Default: 10.00
 cost: 100.00
@@ -58,15 +68,9 @@ tnt-tossable-range: 7
 # Tossable Cooldwon in Seconds
 tnt-tossable-cooldown: 10
 
-# Items Display Name
-# Default: TNT
-display-name: '&cNuke &7&o(Big One)'
-
-# Items Lore
-# Default: null
-lore:
- - '&7A large nuclear warhead'
- - '&cNuke &7&o(aka the Big One)'
+# TNT Cluster Effect
+# TNT will explode and launch more TNT
+tnt-cluster-effect: false
 
 # Allow fires to randomly spawn from TNT
 # Default: true

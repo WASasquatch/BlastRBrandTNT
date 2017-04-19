@@ -109,7 +109,7 @@ public class TNTRedstoneEvent implements Listener {
 					
 					target.setType(Material.AIR);
 					TNTManager.removeRelativePlayersTNT(owner, location);
-					TNTManager.createPrimedTNT(effect, 
+					TNTEffects.createPrimedTNT(effect, 
 												location, 
 												(float) effect.get("yieldMultiplier"), 
 												(int) effect.get("fuseTicks"),

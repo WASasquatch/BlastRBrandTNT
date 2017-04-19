@@ -7,6 +7,15 @@
 # This MUST be the same as the filename, in uppercase
 effect-name: DEFAULT
 
+# Items Display Name
+# Default: TNT
+display-name: 'TNT'
+
+# Items Lore
+# Default: null
+lore:
+ - '&7Default TNT&r'
+
 # Vault Cost
 # Default: 10.00
 cost: 10.00
@@ -58,14 +67,9 @@ tnt-tossable-range: 5
 # Tossable Cooldwon in Seconds
 tnt-tossable-cooldown: 10
 
-# Items Display Name
-# Default: TNT
-display-name: 'TNT'
-
-# Items Lore
-# Default: null
-lore:
- - '&7Default TNT&r'
+# TNT Cluster Effect
+# TNT will explode and launch more TNT
+tnt-cluster-effect: false
 
 # Allow fires to randomly spawn from TNT
 # Default: true

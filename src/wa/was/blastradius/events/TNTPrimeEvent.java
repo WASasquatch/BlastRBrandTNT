@@ -84,7 +84,7 @@ public class TNTPrimeEvent implements Listener {
 	    					( ( (int) effect.get("fuseTicks") > 40 ) ? 
 	    					(int) effect.get("fuseTicks") - 40 : 1 ) : 1 );
 	    		
-		    	TNTPrimed blastRTNT = TNTManager.createPrimedTNT(effect, 
+		    	TNTPrimed blastRTNT = TNTEffects.createPrimedTNT(effect, 
 		    													location, 
 		    													(float) effect.get("yieldMultiplier"), 
 		    													ticks, 

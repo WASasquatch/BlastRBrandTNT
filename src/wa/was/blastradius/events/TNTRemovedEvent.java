@@ -74,7 +74,7 @@ public class TNTRemovedEvent implements Listener {
 						&& ! ( target.equals(uuid) ) ) {
 					
 				TNTManager.removePlayersTNT(uuid, loc, type);
-				TNTManager.createPrimedTNT(effect, 
+				TNTEffects.createPrimedTNT(effect, 
 											loc, 
 											(float) effect.get("yieldMultiplier"), 
 											(int) effect.get("fuseTicks"), 

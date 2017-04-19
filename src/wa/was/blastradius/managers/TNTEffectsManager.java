@@ -1,6 +1,7 @@
 package wa.was.blastradius.managers;
 
 import wa.was.blastradius.BlastRadius;
+import wa.was.blastradius.commands.OnCommand;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,17 +13,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 import wa.was.blastradius.utils.ConsoleColor;
 
@@ -54,6 +64,7 @@ public class TNTEffectsManager {
 	
 	private static TNTEffectsManager instance = new TNTEffectsManager();
 	
+	private JavaPlugin plugin;
 	private PotionEffectsManager potionEffectsManager;
 	
 	private Map<String, Map<String, Object>> effects;
@@ -66,6 +77,7 @@ public class TNTEffectsManager {
 		effects = new HashMap<String, Map<String, Object>>();
 		displayNames = new HashMap<String, String>();
 		potionEffectsManager = BlastRadius.potionManager;
+		plugin = BlastRadius.getBlastRadiusInstance();
 		colors = new HashMap<String, Color>() {
 	        private static final long serialVersionUID = 323135985062054098L; {
 	            put("AQUA", Color.AQUA);
@@ -97,6 +109,79 @@ public class TNTEffectsManager {
 	        }
 	    };
 		loadDefaultEffects();
+	}
+	
+	// Code snippet from SethBling
+	
+    public static Vector calculateVelocity(Vector from, Vector to, int heightGain) {
+        // Gravity of a potion | 115
+        double gravity = 0.115;
+ 
+        // Block locations
+        int endGain = to.getBlockY() - from.getBlockY();
+        double horizDist = Math.sqrt(distanceSquared(from, to));
+ 
+        // Height gain
+        int gain = heightGain;
+ 
+        double maxGain = gain > (endGain + gain) ? gain : (endGain + gain);
+ 
+        // Solve quadratic equation for velocity
+        double a = -horizDist * horizDist / (4 * maxGain);
+        double b = horizDist;
+        double c = -endGain;
+ 
+        double slope = -b / (2 * a) - Math.sqrt(b * b - 4 * a * c) / (2 * a);
+ 
+        // Vertical velocity
+        double vy = Math.sqrt(maxGain * gravity);
+ 
+        // Horizontal velocity
+        double vh = vy / slope;
+ 
+        // Calculate horizontal direction
+        int dx = to.getBlockX() - from.getBlockX();
+        int dz = to.getBlockZ() - from.getBlockZ();
+        double mag = Math.sqrt(dx * dx + dz * dz);
+        double dirx = dx / mag;
+        double dirz = dz / mag;
+ 
+        // Horizontal velocity components
+        double vx = vh * dirx;
+        double vz = vh * dirz;
+ 
+        return new Vector(vx, vy, vz);
+    }
+ 
+    private static double distanceSquared(Vector from, Vector to) {
+        double dx = to.getBlockX() - from.getBlockX();
+        double dz = to.getBlockZ() - from.getBlockZ();
+        return dx * dx + dz * dz;
+    }
+    
+    // End code snippet from SethBling
+	
+	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float pitch, Vector velocity) {
+		TNTPrimed tnt = location.getWorld().spawn(location, TNTPrimed.class);
+		location.getWorld().playSound(location, sound, 1, pitch);
+		String type = (String) effect.get("type");
+		if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
+			Bukkit.getLogger().info("Creating TNTPrimed Entity at: "+location.getX()+", "+location.getY()+", "+location.getZ()+" Initial Yield: "+tnt.getYield()+" Initial FuseTicks: "+tnt.getFuseTicks()+" Effect: "+type);
+		}
+		tnt.setYield(tnt.getYield() * multiplier);
+		tnt.setMetadata("tntType", new FixedMetadataValue(plugin, type));
+		if ( velocity != null ) {
+			tnt.setVelocity(velocity);
+		}
+		tnt.setFuseTicks(ticks);
+		if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
+			Bukkit.getLogger().info("Created TNTPrimed Entity at: "+location.getX()+", "+location.getY()+", "+location.getZ()+" Yield: "+tnt.getYield()+" FuseTicks: "+tnt.getFuseTicks()+" Effect: "+type);
+		}
+		return tnt;
+	}
+	
+	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float pitch) {
+		return createPrimedTNT(effect, location, multiplier, ticks, sound, pitch, null);
 	}
 	
 	public String displayNameToType(String name) {
@@ -233,6 +318,7 @@ public class TNTEffectsManager {
 			} else {
 				effectInfo.put("tossCooldown", effect.getInt("tnt-tossable-cooldown", 10));
 			}
+			effectInfo.put("clusterEffect", effect.getBoolean("tnt-cluster-effect", false));
 			effectInfo.put("doPotions", effect.getBoolean("potion-effect", true));
 			effectInfo.put("consecPotions", effect.getBoolean("consecutive-potion-effects", false));
 			effectInfo.put("showPotionMsg", effect.getBoolean("show-potion-message", true));
@@ -379,6 +465,94 @@ public class TNTEffectsManager {
 	
 	public static TNTEffectsManager getInstance() {
 		return instance;
+	}
+	
+	public static List<Location> getRandomLocationsInRadius(Location center, int radius, int amount, boolean ellipsis) {
+		List<Location> list = new ArrayList<Location>();
+        int cX = center.getBlockX();
+        int cY = center.getBlockY();
+        int cZ = center.getBlockZ();
+        int c = 0;
+        int radiusSquared;
+        if ( ellipsis ) {
+        	radiusSquared = radius * radius;
+        } else {
+        	radiusSquared = radius;
+        }
+        for ( int x = cX - radius; x <= cX + radius; x++ ) {
+            for ( int y = cY - radius; y <= cY + radius; y++ ) {
+                for ( int z = cZ - radius; z <= cZ + radius; z++ ) {
+                    if ( (cX - x) * (cX - x) + (cY - y) * (cY - y) + (cZ - z) * (cZ - z) <= radiusSquared ) { 
+                    	boolean doLog = new Random().nextInt(25)==0;
+                    	if ( doLog && c <= amount ) {
+                    		list.add(center.getWorld().getBlockAt(x, y, z).getLocation());
+                    		c++;
+                    	}
+                    	if ( c >= amount ) {
+                    		return list;
+                    	}
+                    }
+                }
+            }
+        }
+        return list;
+	}
+	
+	public Location getTargetBlock(Location location, int range) {
+		BlockIterator iter = new BlockIterator(location, range);
+		Block lastBlock = iter.next();
+		while (iter.hasNext()) {
+			lastBlock = iter.next();
+			if (lastBlock.getType() != Material.AIR) {
+				break;
+			}
+		}
+		return lastBlock.getLocation();
+    }
+	
+	public TNTPrimed playerTossTNT(Map<String, Object> effect, Player player, int range) {
+	    if ( effect == null ) return null;
+		Vector d = player.getLocation().getDirection();
+		Location el = player.getEyeLocation().add(d);
+		Vector from = el.getDirection();
+	    Location to = getTargetBlock(el, range);
+	    Vector tossed = calculateVelocity(from, to.getDirection(), (int) effect.get("tossHeightGain"));
+	    TNTPrimed tnt = createPrimedTNT(effect, 
+										el, 
+										(float) effect.get("yieldMultiplier"), 
+										(int) effect.get("fuseTicks"), 
+										(Sound) effect.get("soundEffect"), 
+										(float) effect.get("soundEffectPitch"),
+										tossed);
+	    tnt.setVelocity(tnt.getVelocity().add(d).multiply(0.5));
+	    return tnt;
+	    
+	}
+	
+	public void tossClusterTNT(String type, Location center, int radius, int amount, boolean ellipsis) {
+		if ( ! ( hasEffect(type) ) ) return;
+		Map<String, Object> effect = getEffect(type);
+		List<Location> locations = getRandomLocationsInRadius(center, radius, amount, ellipsis);
+		if ( locations.size() > 0 ) {
+			for ( Location location : locations ) {
+				tossTNT(effect, center, location);
+			}
+		}
+	}
+	
+	public void tossTNT(Map<String, Object> effect, Location from, Location to) {
+	    if ( effect == null ) return;
+	    Vector vfrom = from.getDirection();
+	    Vector vto = to.getDirection();
+	    Vector tossed = calculateVelocity(vfrom, vto, (int) effect.get("tossHeightGain"));
+	    TNTPrimed tnt = createPrimedTNT(effect, 
+										from, 
+										(float) effect.get("yieldMultiplier"), 
+										(int) effect.get("fuseTicks"), 
+										(Sound) effect.get("soundEffect"), 
+										(float) effect.get("soundEffectPitch"),
+										tossed);
+	    tnt.setVelocity(tnt.getVelocity().multiply(1.5));
 	}
 
 }

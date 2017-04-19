@@ -17,16 +17,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.*;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
-
-import wa.was.blastradius.BlastRadius;
-import wa.was.blastradius.commands.OnCommand;
 
  /*************************
  * 
@@ -54,14 +45,12 @@ import wa.was.blastradius.commands.OnCommand;
 
 public class TNTLocationManager {
 	
-	private JavaPlugin plugin;
 	private static TNTLocationManager instance = new TNTLocationManager();
 	
 	private Map<UUID, Map<Location, String>> placedTNT;
 	
 	private TNTLocationManager() {
 		placedTNT = new HashMap<UUID, Map<Location, String>>();
-		plugin = BlastRadius.getBlastRadiusInstance();
 	}
 	
 	public void addTNT(Player player, String type, Location location) {
@@ -76,56 +65,6 @@ public class TNTLocationManager {
 			}});
 		}
 	}
-	
-	// Code snippet from SethBling
-	
-    public static Vector calculateVelocity(Vector from, Vector to, int heightGain) {
-        // Gravity of a potion | 115
-        double gravity = 0.115;
- 
-        // Block locations
-        int endGain = to.getBlockY() - from.getBlockY();
-        double horizDist = Math.sqrt(distanceSquared(from, to));
- 
-        // Height gain
-        int gain = heightGain;
- 
-        double maxGain = gain > (endGain + gain) ? gain : (endGain + gain);
- 
-        // Solve quadratic equation for velocity
-        double a = -horizDist * horizDist / (4 * maxGain);
-        double b = horizDist;
-        double c = -endGain;
- 
-        double slope = -b / (2 * a) - Math.sqrt(b * b - 4 * a * c) / (2 * a);
- 
-        // Vertical velocity
-        double vy = Math.sqrt(maxGain * gravity);
- 
-        // Horizontal velocity
-        double vh = vy / slope;
- 
-        // Calculate horizontal direction
-        int dx = to.getBlockX() - from.getBlockX();
-        int dz = to.getBlockZ() - from.getBlockZ();
-        double mag = Math.sqrt(dx * dx + dz * dz);
-        double dirx = dx / mag;
-        double dirz = dz / mag;
- 
-        // Horizontal velocity components
-        double vx = vh * dirx;
-        double vz = vh * dirz;
- 
-        return new Vector(vx, vy, vz);
-    }
- 
-    private static double distanceSquared(Vector from, Vector to) {
-        double dx = to.getBlockX() - from.getBlockX();
-        double dz = to.getBlockZ() - from.getBlockZ();
-        return dx * dx + dz * dz;
-    }
-    
-    // End code snippet from SethBling
 	
 	public void clear() {
 		placedTNT.clear();
@@ -149,29 +88,6 @@ public class TNTLocationManager {
 			}
 		}
 		return false;
-	}
-	
-	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float pitch, Vector velocity) {
-		TNTPrimed tnt = location.getWorld().spawn(location, TNTPrimed.class);
-		location.getWorld().playSound(location, sound, 1, pitch);
-		String type = (String) effect.get("type");
-		if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
-			Bukkit.getLogger().info("Creating TNTPrimed Entity at: "+location.getX()+", "+location.getY()+", "+location.getZ()+" Initial Yield: "+tnt.getYield()+" Initial FuseTicks: "+tnt.getFuseTicks()+" Effect: "+type);
-		}
-		tnt.setYield(tnt.getYield() * multiplier);
-		tnt.setMetadata("tntType", new FixedMetadataValue(plugin, type));
-		if ( velocity != null ) {
-			tnt.setVelocity(velocity);
-		}
-		tnt.setFuseTicks(ticks);
-		if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
-			Bukkit.getLogger().info("Created TNTPrimed Entity at: "+location.getX()+", "+location.getY()+", "+location.getZ()+" Yield: "+tnt.getYield()+" FuseTicks: "+tnt.getFuseTicks()+" Effect: "+type);
-		}
-		return tnt;
-	}
-	
-	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float pitch) {
-		return createPrimedTNT(effect, location, multiplier, ticks, sound, pitch, null);
 	}
 	
 	public static TNTLocationManager getInstance( ) {
@@ -234,18 +150,6 @@ public class TNTLocationManager {
 		}
 		return null;
 	}
-	
-	private Location getTargetBlock(Location location, int range) {
-		BlockIterator iter = new BlockIterator(location, range);
-		Block lastBlock = iter.next();
-		while (iter.hasNext()) {
-			lastBlock = iter.next();
-			if (lastBlock.getType() != Material.AIR) {
-				break;
-			}
-		}
-		return lastBlock.getLocation();
-    }
 
 	@SuppressWarnings("unchecked")
 	public void loadPlacedTNT() {
@@ -392,27 +296,6 @@ public class TNTLocationManager {
 				Bukkit.getLogger().info("TNT Type: "+loc.getValue()+" Placed By: "+uuid.toString()+" Location: "+loc.getKey().getBlockX()+", "+loc.getKey().getY()+", "+loc.getKey().getZ());
 			}
 		}
-	}
-	
-	public TNTPrimed playerTossTNT(Map<String, Object> effect, Player player, int range) {
-	    if ( effect == null ) {
-	    	return null;
-	    }
-		Vector d = player.getLocation().getDirection();
-		Location el = player.getEyeLocation().add(d);
-		Vector from = el.getDirection();
-	    Location to = getTargetBlock(el, range);
-	    Vector tossed = calculateVelocity(from, to.getDirection(), (int) effect.get("tossHeightGain"));
-	    TNTPrimed tnt = createPrimedTNT(effect, 
-										el, 
-										(float) effect.get("yieldMultiplier"), 
-										(int) effect.get("fuseTicks"), 
-										(Sound) effect.get("soundEffect"), 
-										(float) effect.get("soundEffectPitch"),
-										tossed);
-	    tnt.setVelocity(tnt.getVelocity().add(d).multiply(1.0));
-	    return tnt;
-	    
 	}
 
 }

@@ -31,7 +31,6 @@ public class BlastEffectManager {
 	}
 	
 	public void createBlastRadius(Location center, List<Material> imats, List<Material> omats, List<Material> pmats, List<Material> obmats, boolean obliterate, boolean fires, boolean smoke, int sc, double so, int radius, int fradius, boolean ellipsis) {
-		
 		try {
 			
 			obliterate(center, obmats, obliterate, pmats, radius, ellipsis);
@@ -50,11 +49,9 @@ public class BlastEffectManager {
 			e.printStackTrace();
 			
 		}
-		
 	}
 	
 	public void smoke(Location center, int sc, double so, int radius, boolean ellipsis) {
-		
         int cX = center.getBlockX();
         int cY = center.getBlockY();
         int cZ = center.getBlockZ();
@@ -96,11 +93,9 @@ public class BlastEffectManager {
                 }
             }
         }
-
 	}
 	
 	public void fires(Location center, List<Material> pmats, int radius, boolean ellipsis) {
-		
         int cX = center.getBlockX();
         int cY = center.getBlockY();
         int cZ = center.getBlockZ();
@@ -133,11 +128,9 @@ public class BlastEffectManager {
                 }
             }
         }
-
 	}
 	
 	public void obliterate(Location center, List<Material> obmats, boolean obliterate, List<Material> pmats, int radius, boolean ellipsis) {
-		
         int cX = center.getBlockX();
         int cY = center.getBlockY();
         int cZ = center.getBlockZ();
@@ -170,11 +163,9 @@ public class BlastEffectManager {
                 }
             }
         }
-
 	}
 	
 	public void render(Location center, List<Material> mats, List<Material> pmats, int radius, boolean doRandom, boolean ellipsis) {
-		
         int cX = center.getBlockX();
         int cY = center.getBlockY();
         int cZ = center.getBlockZ();
@@ -192,25 +183,6 @@ public class BlastEffectManager {
                     	Block block = center.getWorld().getBlockAt(x, y, z);
                     	int mc = mats.size()-1;
                     	int threshold = 10;
-
-                    	// Trigger TNT in deadzone radius... or spawn a bunch of spam TNT ugh.
-                    	/*
-                    	if ( block.getLocation().distance(center) > 1 && TNTManager.containsLocation(block.getLocation()) ) {
-                    		
-                    		String type = TNTManager.getType(block.getLocation());
-                    		Map<String, Object> effect = TNTEffects.getEffect(type);
-                    		
-                    		block.setType(Material.AIR);
-        					TNTManager.createPrimedTNT(type, 
-        												block.getLocation(), 
-        												(double)(int) effect.get("blastRadius"),
-        												(int) effect.get("fuseTicks"), 
-        												(Sound) effect.get("soundEffect"), 
-        												(float) effect.get("soundEffectPitch"),
-        												plugin);
-        					
-                    	}
-                    	*/
                     	
                     	if ( ! ( block.getType().equals(Material.AIR) ) ) {
                     		if ( ! ( pmats.contains(block.getType())) ) {
@@ -234,11 +206,9 @@ public class BlastEffectManager {
                 }
             }
         }
-
 	}
 	
 	public static List<Material> getBlocksInRadius(Location center, int radius, boolean ellipsis) {
-		
 		List<Material> list = new ArrayList<Material>();
         int cX = center.getBlockX();
         int cY = center.getBlockY();
@@ -260,7 +230,6 @@ public class BlastEffectManager {
         }
         
         return list;
-
 	}
 	
     public static BlastEffectManager getinstance(BlastRadius plugin) {

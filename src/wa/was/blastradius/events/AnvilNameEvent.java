@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import wa.was.blastradius.BlastRadius;
+import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.managers.TNTEffectsManager;
 
 /*************************
@@ -58,12 +59,22 @@ public class AnvilNameEvent implements Listener {
 			if ( meta.getDisplayName() == null ) return;
 			
 			if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
+				
+				String type = TNTEffects.displayNameToType(meta.getDisplayName());
 				item.setType(Material.AIR);
 				meta.setDisplayName(null);
+				meta.getLore().clear();
 				item.setItemMeta(meta);
+				
+				if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
+					BlastRadius.getBlastRadiusInstance().getLogger().info("PrepareAnvilEvent: Attempted to rename TNT to BlastR Brand type: "+type);
+					BlastRadius.getBlastRadiusInstance().getLogger().info("PrepareAnvilEvent: Users involved in event: "+e.getViewers().toString());
+				}
+				
 			}
 			
 		}
+		
 		
 	}
 
