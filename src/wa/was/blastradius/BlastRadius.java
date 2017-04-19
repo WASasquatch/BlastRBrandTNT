@@ -11,7 +11,7 @@ import wa.was.blastradius.events.TNTExplosionEvent;
 import wa.was.blastradius.events.TNTFallingEvent;
 import wa.was.blastradius.events.TNTInteractOrTossEvent;
 import wa.was.blastradius.events.TNTPrimeEvent;
-import wa.was.blastradius.events.TNTRedstoneEvent;
+//import wa.was.blastradius.events.TNTRedstoneEvent;
 import wa.was.blastradius.events.TNTPlaceEvent;
 import wa.was.blastradius.managers.BlastEffectManager;
 import wa.was.blastradius.managers.PotionEffectsManager;
@@ -97,7 +97,7 @@ public class BlastRadius extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new TNTPrimeEvent(), this); // Would love to have a actual prime event
 		getServer().getPluginManager().registerEvents(new TNTPlaceEvent(this), this);
 		getServer().getPluginManager().registerEvents(new TNTFallingEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this);
+		//getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTInteractOrTossEvent(this), this);
 		getServer().getPluginManager().registerEvents(new AnvilNameEvent(this), this);
 		
