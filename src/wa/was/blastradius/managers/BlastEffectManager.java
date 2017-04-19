@@ -34,7 +34,7 @@ public class BlastEffectManager {
 		
 		try {
 			
-			obliterate(center, obmats, obliterate, radius, ellipsis);
+			obliterate(center, obmats, obliterate, pmats, radius, ellipsis);
 			render(center, omats, pmats, radius, true, ellipsis);
 			render(center, omats, pmats, (int)(radius/1.25), false, ellipsis);
 			render(center, imats, pmats, (int)(radius/1.75), false, ellipsis);
@@ -136,7 +136,7 @@ public class BlastEffectManager {
 
 	}
 	
-	public void obliterate(Location center, List<Material> obmats, boolean obliterate, int radius, boolean ellipsis) {
+	public void obliterate(Location center, List<Material> obmats, boolean obliterate, List<Material> pmats, int radius, boolean ellipsis) {
 		
         int cX = center.getBlockX();
         int cY = center.getBlockY();
@@ -156,7 +156,8 @@ public class BlastEffectManager {
                     	
                     	if ( ! ( block.getType().equals(Material.AIR) ) ) {
                     			
-                    		if ( obmats.contains(block.getType()) ) {
+                    		if ( obmats.contains(block.getType()) 
+                    				&& ! ( pmats.contains(block.getType()) ) ) {
                     			if ( ! ( obliterate ) ) {
                     				block.breakNaturally();
                     			}

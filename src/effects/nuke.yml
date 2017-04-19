@@ -91,10 +91,10 @@ elliptical-radius: true
 # This is the Base Yield multiplied by this value
 # Larger the multiplier, the more of a impact it 
 # Will have on performance
-# Default: 1.0 (Normal Explosion)
-# Value of 0 would be no blocks removed outside 
+# Default: 1 (Normal Explosion)
+# Value of 0 would be no vanilla blocks removed outside 
 # material lists
-blast-yield-multiplier: 4.5
+blast-yield-multiplier: 6
 
 # Blast Radius in Blocks
 # Larger the radius, the more of a impact it 
@@ -266,46 +266,8 @@ obliterate-materials:
  - DARK_OAK_FENCE
  - DARK_OAK_FENCE_GATE
  - DARK_OAK_STAIRS
- - GLASS
- - JUNGLE_DOOR
- - JUNGLE_DOOR_ITEM
- - JUNGLE_FENCE
- - JUNGLE_FENCE_GATE
- - JUNGLE_WOOD_STAIRS
- - LADDER
- - LEAVES
- - LEAVES_2
- - LOG
- - LOG_2
  - SIGN
  - SIGN_POST
- - SPONGE
- - SPRUCE_DOOR
- - SPRUCE_DOOR_ITEM
- - SPRUCE_FENCE
- - SPRUCE_FENCE_GATE
- - SPRUCE_WOOD_STAIRS
- - STAINED_GLASS
- - STAINED_GLASS_PANE
- - STRING
- - SUGAR_CANE_BLOCK
- - THIN_GLASS
- - TORCH
- - TRAP_DOOR
- - TRAPPED_CHEST
- - TRIPWIRE
- - TRIPWIRE_HOOK
- - VINE
- - WALL_BANNER
- - WALL_SIGN
- - WATER_LILY
- - WEB
- - WHEAT
- - WOOD
- - WOOD_BUTTON
- - WOOD_DOOR
- - WOOD_DOUBLE_STEP 
- - WOOD_PLATE
- - WOOD_STAIRS
- - WOOD_STEP
- - WORKBENCH
+# SPECIALS SPECIFIC TO NUKE
+ - COBBLESTONE
+ - STONE
