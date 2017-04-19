@@ -1,0 +1,37 @@
+# Consecutive Potion Effects
+
+# Do messages
+show-player-messages: true
+
+# Notify Owner of Blast
+# Sends the owner a message that their TNT has detonated
+notify-owner: true
+
+# Message to send a player when their TNT has detonated
+notify-message: '&6You Blastr Brand TNT &r{TYPE} &6has detonated at &r{LOCATION}'
+
+# Price Color/Format
+# Used for {PRICE} if not using free
+# Default: &2
+price-format: '&2'
+
+# Additional Local
+local:
+  invalid-effect: '&cThe effect &r{TYPE} &cis not valid.'
+  no-permission: '&cYou do not have permission.'
+  no-console: '&cYou cannot execute this command from console.'
+  cleared-locations: '&6All Placed TNT locations have been removed.'
+  debug-command: '&6Please check the console for a debug response.'
+  debug-command-off: '&6Debug monitor &4Off.'
+  debug-command-on: '&6Debug monitor &2On.'
+  amount-too-large: '&cYou must enter an amount between &r1 - 64'
+  purchase-success: '&6You have purchased &r{AMOUNT} {TYPE} &6for {PRICE}'
+  purchase-fail: '&cYou need {PRICE} &cto purchase &r{AMOUNT} {TYPE}'
+  sold-success: '&6You have &csold &r{AMOUNT} {TYPE} &6for {PRICE}'
+  sold-fail: '&cYou do not have &r{AMOUNT} {TYPE}'
+  give-success: '&6You have received &r{AMOUNT} {TYPE}'
+  give-other-success: '&6You have given &b{PLAYER} &r{AMOUNT} {TYPE}'
+  gave-success: '&6You have received &r{AMOUNT} {TYPE} &6from &b{PLAYER}'
+  target-not-online: '&cThe player &r{PLAYER} &cis not online or does not exist.'
+  problem-removing-itmes: '&cThere was a problem removing some items from your inventory!'
+  free: '&2FREE&r'

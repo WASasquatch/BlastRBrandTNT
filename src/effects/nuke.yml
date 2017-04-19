@@ -1,0 +1,308 @@
+# Default Effect File
+# You can use this as your template for custom TNT. 
+# Name the file the same as the effect name, but in lowercase
+# Effect name should be UPPERCASE
+
+# Effect name
+# This MUST be the same as the filename, in uppercase
+effect-name: NUKE
+
+# Vault Cost
+# Default: 10.00
+cost: 100.00
+
+# Vault Worth
+# Default: 0.10
+worth: 45.00
+
+# Fuse Ticks
+# Default: 80
+fuse-ticks: 80
+
+# Fuse Sound
+# Default: ENTITY_TNT_PRIMED 
+sound-effect: BLOCK_NOTE_BASS
+
+# Fuse Sound Pitch
+# Range 0.5 - 2.0
+# Default: (float) 1
+sound-effect-pitch: 2.0
+
+# Explosion Volume (Not Implemented)
+# See: https://bukkit.org/threads/playsound-parameters-volume-and-pitch.151517/
+# Default: 2
+sound-explosion-volume: 5
+
+# Temper Proof
+# If a TNT is Tmper Proof anyone that is NOT the 
+# placer will ignite it upon attempting to remove
+# Default: false
+tamper-proof: true
+
+# Tossable TNT
+# Is this TNT Tossable?
+# Default: false
+tnt-tossable: false
+
+# Tossable height gain
+# This is how heigh a tossed item will be tossed
+# Default: 3
+tnt-tossable-height: 3
+
+# Tossable range
+# This is how far a tossable can be thrown
+# Max range 1 - 50
+# Default: 7
+tnt-tossable-range: 15
+
+# Items Display Name
+# Default: TNT
+display-name: '&cNuke &7&o(Big One)'
+
+# Items Lore
+# Default: null
+lore:
+ - '&7A large nuclear warhead'
+ - '&cNuke &7&o(aka the Big One)'
+
+# Allow fires to randomly spawn from TNT
+# Default: true
+blast-fires: true
+
+# Allow smoke to spawn randomly from TNT
+# Performance Impact
+# Default: false
+blast-smoke: true
+
+# Obliterate Obliterables
+# All objects to obliterate will not drop their 
+# items naturally.
+# Default: false
+obliterate-obliterables: true
+
+# Elliptical Radius
+# Default: true
+elliptical-radius: true
+
+# Blast Yield Multiplier
+# This is the Base Yield multiplied by this value
+# Larger the multiplier, the more of a impact it 
+# Will have on performance
+# Default: 1.0 (Normal Explosion)
+# Value of 0 would be no blocks removed outside 
+# material lists
+blast-yield-multiplier: 4.5
+
+# Blast Radius in Blocks
+# Larger the radius, the more of a impact it 
+# has on performance
+# Valid Radiuses: 5 - 50
+# Default: 10
+blast-radius: 30
+
+# Fire Radius in Blocks
+# Valid Radiuses: 5 - 50
+# Default: 9
+fire-radius: 20
+
+# Smoke particle count per spawn
+# More particles = more of a impact on performance
+smoke-count: 10
+
+# Smoke X,Y,Z Offset
+# Defauilt: 0.25
+smoke-offset: 1.0
+
+# Do Explosion Effects
+potion-effect: true
+
+show-potion-message: true
+
+potion-message: '&1You have been &2effected &1with &c{TYPE} &1for &6{TIME} &rseconds'
+
+# Explosion Player Effects
+# 
+# Effect_Name:
+#   type: PotionEffectType
+#   duration: IN_TICKS
+#   amplifier: DOUBLE
+#   ambient: true/false
+#   particles: true/false
+#   color: COLOR
+#
+# For PotionEffectType's see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+# For Color's see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Color.html
+#
+potion-effects:
+  Blindness:
+    type: BLINDNESS
+    duration: 100
+    amplifier: 1
+    ambient: false
+    particles: false
+    color: null
+  RadiationGlow:
+    type: GLOWING
+    duration: 2400
+    amplifier: 1
+    ambient: false
+    particles: false
+    color: GREEN
+  SlowDown:
+    type: SLOW
+    duration: 1200
+    amplifier: 1
+    ambient: false
+    particles: false
+    color: null
+  RadiationWeakness:
+    type: WEAKNESS
+    duration: 2400
+    amplifier: 2
+    ambient: false
+    particles: false
+    color: null
+  RadiationPoisoning:
+    type: POISON
+    duration: 800
+    amplifier: 1
+    ambient: false
+    particles: false
+    color: null
+  
+
+# Inner Radius Materials
+# For doubling chances of type, just add it 
+# twice, or three times... or? 
+inner-blast-materials:
+ - AIR
+ - GRAVEL
+ - OBSIDIAN
+ - NETHERRACK
+ - COBBLESTONE 
+ 
+# Outer Blast Radius Materials
+outer-blast-materials:
+ - GRAVEL
+ - COBBLESTONE
+ - DIRT
+ 
+# Protected Materials
+# These materials will not be touched at all
+# This includes the random fire spawns (Except 
+# form fire spread)
+protected-materials:
+ - BEDROCK
+ - WATER
+ - STATIONARY_LAVA
+ - STATIONARY_WATER
+ - TNT
+ - EXPLOSIVE_MINECART
+ - ARMOR_STAND
+ - BREWING_STAND
+ - CHEST
+ - ENDER_CHEST
+ - STRUCTURE_BLOCK
+ - COMMAND
+ - COMMAND_CHAIN
+ - COMMAND_MINECART
+ - COMMAND_REPEATING
+ - IRON_ORE
+ - DIAMOND_ORE
+ - COAL_ORE
+ - GOLD_ORE
+ - EMERALD_ORE
+ - IRON_BLOCK
+ - IRON_FENCE
+ - IRON_DOOR_BLOCK
+ - IRON_DOOR
+ - IRON_PLATE
+ - IRON_TRAPDOOR
+ - GOLD_BLOCK
+ - DIAMOND_BLOCK
+ 
+# Obliterate Outer Materials
+# These materials will be set to AIR
+# Subsequently they will break naturally if 
+# obliterate-obliterables is false
+obliterate-materials:
+ - REDSTONE_COMPARATOR
+ - REDSTONE_COMPARATOR_OFF
+ - REDSTONE_COMPARATOR_ON
+ - REDSTONE_LAMP_OFF
+ - REDSTONE_LAMP_ON
+ - REDSTONE_ORE
+ - REDSTONE_TORCH_OFF
+ - REDSTONE_TORCH_ON
+ - REDSTONE_WIRE
+ - YELLOW_FLOWER
+ - LONG_GRASS
+ - FLOWER_POT
+ - DEAD_BUSH
+ - PUMPKIN_STEM
+ - SAPLING
+ - TRAP_DOOR
+ - ACACIA_DOOR
+ - ACACIA_DOOR_ITEM
+ - ACACIA_FENCE
+ - ACACIA_FENCE_GATE
+ - ACACIA_STAIRS
+ - BIRCH_DOOR
+ - BIRCH_DOOR_ITEM
+ - BIRCH_FENCE
+ - BIRCH_FENCE_GATE
+ - BIRCH_WOOD_STAIRS
+ - BOAT
+ - BOAT_ACACIA
+ - BOAT_BIRCH
+ - BOAT_DARK_OAK
+ - BOAT_JUNGLE
+ - BOAT_SPRUCE
+ - DARK_OAK_DOOR
+ - DARK_OAK_DOOR_ITEM
+ - DARK_OAK_FENCE
+ - DARK_OAK_FENCE_GATE
+ - DARK_OAK_STAIRS
+ - GLASS
+ - JUNGLE_DOOR
+ - JUNGLE_DOOR_ITEM
+ - JUNGLE_FENCE
+ - JUNGLE_FENCE_GATE
+ - JUNGLE_WOOD_STAIRS
+ - LADDER
+ - LEAVES
+ - LEAVES_2
+ - LOG
+ - LOG_2
+ - SIGN
+ - SIGN_POST
+ - SPONGE
+ - SPRUCE_DOOR
+ - SPRUCE_DOOR_ITEM
+ - SPRUCE_FENCE
+ - SPRUCE_FENCE_GATE
+ - SPRUCE_WOOD_STAIRS
+ - STAINED_GLASS
+ - STAINED_GLASS_PANE
+ - STRING
+ - SUGAR_CANE_BLOCK
+ - THIN_GLASS
+ - TORCH
+ - TRAP_DOOR
+ - TRAPPED_CHEST
+ - TRIPWIRE
+ - TRIPWIRE_HOOK
+ - VINE
+ - WALL_BANNER
+ - WALL_SIGN
+ - WATER_LILY
+ - WEB
+ - WHEAT
+ - WOOD
+ - WOOD_BUTTON
+ - WOOD_DOOR
+ - WOOD_DOUBLE_STEP 
+ - WOOD_PLATE
+ - WOOD_STAIRS
+ - WOOD_STEP
+ - WORKBENCH

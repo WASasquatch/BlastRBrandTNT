@@ -1,0 +1,25 @@
+name: BlastRadius
+version: 0.1.0
+main: wa.was.blastradius.BlastRadius
+depend: [Vault]
+commands:
+  blastr:
+    description: Allows general control of WeChat
+    aliases: [brad]
+    usage: /blastr <BUY|GIVE|DEBUG> <TYPE|USERNAME|DUMPLOCATIONS> <TYPE|(AMOUNT)> (AMOUNT)
+permissions:
+  blastradius.buy:
+    description: Allow purchasing BlastR Brand TNT
+    default: false
+  blastradius.sell:
+    description: Allow selling of BlastR Brand TNT
+    default: false
+  blastradius.toss:
+    description: Allow tossing of tossable TNT
+    default: op
+  blastradius.give:
+    description: Allow giving BlastR Brand TNT
+    default: op
+  blastradius.admin:
+    description: Allow display of placed TNT info and clearing of Placed TNT info
+    default: op
