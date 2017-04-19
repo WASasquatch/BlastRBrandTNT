@@ -57,7 +57,8 @@ public class TNTPrimeEvent implements Listener {
 	public void onExplosionPrime(ExplosionPrimeEvent e) {
 
 	    if ( ! ( e.getEntity() instanceof TNTPrimed ) 
-	    		|| ( e.getEntity() instanceof TNTPrimed && e.getEntity().hasMetadata("tntType") ) )
+	    		|| ( e.getEntity() instanceof TNTPrimed 
+	    				&& e.getEntity().hasMetadata("tntType") ) )
 	    	return;
 		
 	    TNTPrimed tnt = (TNTPrimed) e.getEntity();

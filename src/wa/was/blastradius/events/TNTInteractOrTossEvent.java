@@ -88,26 +88,37 @@ public class TNTInteractOrTossEvent implements Listener {
 		
 		if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) ) {
 			
+			plugin.getLogger().info("Here 1");
+			
 			if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
 				e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.no-permission")));
 				return;
 			}
 			
+			plugin.getLogger().info("Here 2");
+			
 			ItemStack item = e.getItem();
 			
 			if ( item.hasItemMeta() ) {
 				
+				plugin.getLogger().info("Here 3 has Meta");
+				
 				ItemMeta meta = e.getItem().getItemMeta();
 				
 				if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
+					
+					plugin.getLogger().info("Here 4 Has DisplayName");
 					
 					String type = TNTEffects.displayNameToType(meta.getDisplayName());
 					Map<String, Object> effect = TNTEffects.getEffect(type);
 					
 					if ( effect != null && (boolean) effect.get("tntTossable") ) {
 						
+						plugin.getLogger().info("Here 5 Tossable");
+						
 						if ( cooldowns.containsKey(e.getPlayer().getUniqueId()) ) {
 							if ( cooldowns.get(e.getPlayer().getUniqueId()) > System.currentTimeMillis() ) {
+								plugin.getLogger().info("Here Waiting for Cooldown");
 								long timeDiff = TimeUnit.MILLISECONDS.toMinutes(cooldowns.get(e.getPlayer().getUniqueId()) - System.currentTimeMillis());
 								e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', 
 											plugin.getConfig().getString("local.toss-cooldown")
@@ -115,9 +126,11 @@ public class TNTInteractOrTossEvent implements Listener {
 											.replace("{TYPE}", (String) effect.get("displayName"))));
 								return;
 							} else if ( cooldowns.get(e.getPlayer().getUniqueId()) < System.currentTimeMillis() ) {
+								plugin.getLogger().info("Here Removing Cooldown");
 								cooldowns.remove(e.getPlayer().getUniqueId());
 							}
 						}
+						plugin.getLogger().info("Here Tossing TNT");
 				
 						TNTManager.playerTossTNT(effect, e.getPlayer(), (int) effect.get("tossRange"));
 						cooldowns.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + (int) effect.get("tossCooldown") * 1000);
