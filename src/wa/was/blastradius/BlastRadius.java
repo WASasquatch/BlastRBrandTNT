@@ -79,7 +79,7 @@ public class BlastRadius extends JavaPlugin {
 		TNTEffects = TNTEffectsManager.getInstance();
 		blastManager = BlastEffectManager.getinstance(this);
 		
-		//new TNTPrimeSpawn_v1_11_R1();
+		//new TNTPrimeSpawn_v1_11_R1(); // I clearly don't understand NMS Overrides...
 		
 		if ( getConfig().getBoolean("show-player-messages") ) {
 			doMessages = true;
