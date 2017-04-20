@@ -48,8 +48,15 @@ sound-explosion-volume: 2
 # Default: false
 tamper-proof: false
 
+# TNT Water Damage
+# TNT isn't a dud in water
+# Experiemental!
+# Default: false
+tnt-water-damage: false
+
 # Tossable TNT
 # Is this TNT Tossable?
+# Experiemental!
 # Default: false
 tnt-tossable: false
 
@@ -58,18 +65,31 @@ tnt-tossable: false
 # Default: 3
 tnt-tossable-height: 3
 
-# Tossable range
-# This is how far a tossable can be thrown
-# Max range 1 - 50
-# Default: 5
-tnt-tossable-range: 5
+# Tossable Force
+# This the power behind a throw
+# Max force 1.0 - 5.0
+# Default: 0.5
+tnt-tossable-force: 0.5
 
 # Tossable Cooldwon in Seconds
 tnt-tossable-cooldown: 10
 
 # TNT Cluster Effect
 # TNT will explode and launch more TNT
+# Experiemental!
+# Default: false
 tnt-cluster-effect: false
+
+# TNT Cluster Effect Tyupe
+# Default: DEFAULT
+# Remember to change this to an existing
+# Type if you remove/change default.yml
+tnt-cluster-effect-type: DEFAULT
+
+# TNT Cluster Effect Amount
+# How many TNT spawn from cluster effect
+# Default: 3
+tnt-cluster-effect-amount: 3
 
 # Allow fires to randomly spawn from TNT
 # Default: true

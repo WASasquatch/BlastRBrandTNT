@@ -126,7 +126,7 @@ public class TNTInteractOrTossEvent implements Listener {
 				
 						}
 				
-						TNTEffects.playerTossTNT(effect, e.getPlayer(), (int) effect.get("tossRange"));
+						TNTEffects.playerTossTNT(effect, e.getPlayer());
 						cooldowns.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + (int) effect.get("tossCooldown") * 1000);
 						
 					}

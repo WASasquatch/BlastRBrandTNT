@@ -231,6 +231,7 @@ public class TNTEffectsManager {
 				Bukkit.getServer().getLogger().warning("Vault Worth cannot be less than 0.1. Vault cost entered: "+effect.getInt("fire-radius")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("vaultWorth", 0.1);
 			}
+			effectInfo.put("tntReceivable", effect.getBoolean("tnt-receivable", true));
 			effectInfo.put("displayName", ChatColor.translateAlternateColorCodes('&', effect.getString("display-name", "TNT")));
 			displayNames.put(ChatColor.translateAlternateColorCodes('&', (String)effectInfo.get("displayName")), effectName);
 			List<String> effectLore = effect.getStringList("lore");
@@ -244,7 +245,7 @@ public class TNTEffectsManager {
 			if ( Sound.valueOf(effect.getString("sound-effect", "ENTITY_TNT_PRIMED")) != null ) {
 				effectInfo.put("soundEffect", Sound.valueOf(effect.getString("sound-effect", "ENTITY_TNT_PRIMED")));
 			} else {
-				Bukkit.getServer().getLogger().warning("Sound Effect invalid: "+effect.getInt("sound-effect")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("Sound Effect invalid: "+effect.get("sound-effect")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("soundEffect", Sound.ENTITY_TNT_PRIMED);
 			}
 			double effectPitch = effect.getDouble("sound-effect-pitch");
@@ -265,6 +266,7 @@ public class TNTEffectsManager {
 				effectInfo.put("explosionVolume", (float)explosionVolume);
 			}
 			effectInfo.put("tamperProof", effect.getBoolean("tamper-proof", false));
+			effectInfo.put("doWaterDamage", effect.getBoolean("tnt-water-damage", false));
 			effectInfo.put("doFires", effect.getBoolean("blast-fires", true));
 			effectInfo.put("doSmoke", effect.getBoolean("blast-smoke", false));
 			effectInfo.put("obliterate", effect.getBoolean("obliterate-obliterables", false));
@@ -272,53 +274,60 @@ public class TNTEffectsManager {
 			if ( effect.getInt("blast-yield-multiplier", 1) <= 20 ) {
 				effectInfo.put("yieldMultiplier", (float) effect.getDouble("blast-yield-multiplier", 1));
 			} else {
-				Bukkit.getServer().getLogger().warning("Blast Multiplier out of Range: "+effect.getDouble("blast-yield-multiplier")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("Blast Multiplier out of Range: "+effect.get("blast-yield-multiplier")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("yieldMultiplier", 1);
 			}
 			if ( effect.getInt("blast-radius", 10) <= 50 ) {
 				effectInfo.put("blastRadius", effect.getInt("blast-radius", 10));
 			} else {
-				Bukkit.getServer().getLogger().warning("Dead Zone out of Range: "+effect.getInt("blast-radius")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("Dead Zone out of Range: "+effect.get("blast-radius")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("blastRadius", 10);
 			}
 			if ( effect.getInt("fire-radius", 9) <= 50 ) {
 				effectInfo.put("fireRadius", effect.getInt("fire-radius", 9));
 			} else {
-				Bukkit.getServer().getLogger().warning("Fire Radius out of Range: "+effect.getInt("fire-radius")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("Fire Radius out of Range: "+effect.get("fire-radius")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("fireRadius", 9);
 			}
 			if ( effect.getInt("smoke-count", 10) <= 100 ) {
 				effectInfo.put("smokeCount", effect.getInt("smoke-count", 10));
 			} else {
-				Bukkit.getServer().getLogger().warning("Smoke Count out of Range: "+effect.getInt("smoke-count")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("Smoke Count out of Range: "+effect.get("smoke-count")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("smokeCount",  10);
 			}
 			if ( Double.compare(effect.getDouble("smoke-offset", 0.25), 10) < 0 ) {
 				effectInfo.put("smokeOffset", effect.getDouble("smoke-offset", 0.25));
 			} else {
-				Bukkit.getServer().getLogger().warning("Smoke Offset out of Range: "+effect.getInt("smoke-offset")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("Smoke Offset out of Range: "+effect.get("smoke-offset")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("smokeOffset", 0.25);
 			}
 			effectInfo.put("tntTossable", effect.getBoolean("tnt-tossable", false));
 			if ( effect.getInt("tnt-tossable-height", 3) < 256 ) {
 				effectInfo.put("tossHeightGain", effect.getInt("tnt-tossed-height", 3));
 			} else {
-				Bukkit.getServer().getLogger().warning("TNT Tossable Height gain out of Range: "+effect.getInt("tnt-tossable-height")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("TNT Tossable Height gain out of Range: "+effect.get("tnt-tossable-height")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("tossHeightGain", 3);
 			}
-			if ( effect.getInt("tnt-tossable-range", 3) < 50 && effect.getInt("tnt-tossable-range", 3) > 1 ) {
-				effectInfo.put("tossRange", effect.getInt("tnt-tossable-range", 7));
+			if ( Double.compare(effect.getDouble("tnt-tossable-force", 1.5), 10.0) < 0 ) {
+				effectInfo.put("tossForce", effect.getDouble("tnt-tossable-force", 7));
 			} else {
-				Bukkit.getServer().getLogger().warning("TNT Tossable Range out of Range: "+effect.getInt("tnt-tossable-range")+" for TNT Effect: "+effectName+". Defaulting...");
-				effectInfo.put("tossRange", 7);
+				Bukkit.getServer().getLogger().warning("TNT Force to Strong. Forced used: "+effect.get("tnt-tossable-force")+" for TNT Effect: "+effectName+". Defaulting...");
+				effectInfo.put("tossForce", 7);
 			}
 			if ( effect.getInt("tnt-tossable-cooldown", 10) < 1 ) {
-				Bukkit.getServer().getLogger().warning("TNT Tossable Cooldown must be above 1. Value found: "+effect.getInt("tnt-tossable-cooldown")+" for TNT Effect: "+effectName+". Defaulting...");
+				Bukkit.getServer().getLogger().warning("TNT Tossable Cooldown must be above 1. Value found: "+effect.get("tnt-tossable-cooldown")+" for TNT Effect: "+effectName+". Defaulting...");
 				effectInfo.put("tossCooldown", 10);
 			} else {
 				effectInfo.put("tossCooldown", effect.getInt("tnt-tossable-cooldown", 10));
 			}
-			effectInfo.put("clusterEffect", effect.getBoolean("tnt-cluster-effect", false));
+			effectInfo.put("doCluster", effect.getBoolean("tnt-cluster-effect", false));
+			if ( effect.getInt("tnt-cluster-effect-amount", 3) > 10 ) {
+				Bukkit.getServer().getLogger().warning("TNT Cluster Effect Amount must be between 1 - 10: "+effect.get("tnt-cluster-effect-amount")+" for TNT Effect: "+effectName+". Defaulting...");
+				effectInfo.put("clusterAmount", 3);
+			} else {
+				effectInfo.put("clusterAmount", effect.getInt("tnt-cluster-effect-amount", 3));
+			}
+			effectInfo.put("clusterType", effect.getString("tnt-cluster-effect-type", "DEFAULT"));
 			effectInfo.put("doPotions", effect.getBoolean("potion-effect", true));
 			effectInfo.put("consecPotions", effect.getBoolean("consecutive-potion-effects", false));
 			effectInfo.put("showPotionMsg", effect.getBoolean("show-potion-message", true));
@@ -467,35 +476,34 @@ public class TNTEffectsManager {
 		return instance;
 	}
 	
-	public static List<Location> getRandomLocationsInRadius(Location center, int radius, int amount, boolean ellipsis) {
-		List<Location> list = new ArrayList<Location>();
-        int cX = center.getBlockX();
-        int cY = center.getBlockY();
-        int cZ = center.getBlockZ();
-        int c = 0;
-        int radiusSquared;
-        if ( ellipsis ) {
-        	radiusSquared = radius * radius;
-        } else {
-        	radiusSquared = radius;
-        }
-        for ( int x = cX - radius; x <= cX + radius; x++ ) {
-            for ( int y = cY - radius; y <= cY + radius; y++ ) {
-                for ( int z = cZ - radius; z <= cZ + radius; z++ ) {
-                    if ( (cX - x) * (cX - x) + (cY - y) * (cY - y) + (cZ - z) * (cZ - z) <= radiusSquared ) { 
-                    	boolean doLog = new Random().nextInt(25)==0;
-                    	if ( doLog && c <= amount ) {
-                    		list.add(center.getWorld().getBlockAt(x, y, z).getLocation());
-                    		c++;
-                    	}
-                    	if ( c >= amount ) {
-                    		return list;
-                    	}
-                    }
-                }
-            }
-        }
-        return list;
+	public List<Location> getRandomLocationsInRadius(Location center, int radius, int amount) {
+		Random r = new Random();
+		List<Location> locations = new ArrayList<Location>();
+		for ( int i = 1; i <= amount; i++ ) {
+			int randomRadius = r.nextInt() * radius;
+			double theta =  Math.toRadians(r.nextDouble() * 360);
+			double phi = Math.toRadians(r.nextDouble() * 180 - 90);
+			double x = randomRadius * Math.cos(theta) * Math.sin(phi);
+			double y = randomRadius * Math.sin(theta) * Math.cos(phi);
+			double z = randomRadius * Math.cos(phi);
+			locations.add(center.add(x, y, z));
+		}
+		return locations;
+	}
+	
+	public List<Location> getRandomLocation(Location center, int radius, int amount) {
+		Random rand = new Random();
+		List<Location> locations = new ArrayList<Location>();
+		for ( int i = 1; i <= amount; i++ ) {
+			double angle = rand.nextDouble()*360;
+			double x = center.getX() + (rand.nextDouble()*radius*Math.cos(Math.toRadians(angle)));
+			double y = center.getY() + (rand.nextDouble()*radius*Math.cos(Math.toRadians(angle)));
+			double z = center.getZ() + (rand.nextDouble()*radius*Math.sin(Math.toRadians(angle)));
+			Location relLoc = new Location(center.getWorld(), x, y, z);
+			Location location = center.getWorld().getHighestBlockAt(relLoc).getLocation();
+			locations.add(location);
+		}
+		return locations;
 	}
 	
 	public Location getTargetBlock(Location location, int range) {
@@ -504,18 +512,19 @@ public class TNTEffectsManager {
 		while (iter.hasNext()) {
 			lastBlock = iter.next();
 			if (lastBlock.getType() != Material.AIR) {
-				break;
+				continue;
 			}
+			break;
 		}
 		return lastBlock.getLocation();
     }
 	
-	public TNTPrimed playerTossTNT(Map<String, Object> effect, Player player, int range) {
+	public TNTPrimed playerTossTNT(Map<String, Object> effect, Player player) {
 	    if ( effect == null ) return null;
 		Vector d = player.getLocation().getDirection();
 		Location el = player.getEyeLocation().add(d);
 		Vector from = el.getDirection();
-	    Location to = getTargetBlock(el, range);
+	    Location to = getTargetBlock(el, 5);
 	    Vector tossed = calculateVelocity(from, to.getDirection(), (int) effect.get("tossHeightGain"));
 	    TNTPrimed tnt = createPrimedTNT(effect, 
 										el, 
@@ -524,7 +533,7 @@ public class TNTEffectsManager {
 										(Sound) effect.get("soundEffect"), 
 										(float) effect.get("soundEffectPitch"),
 										tossed);
-	    tnt.setVelocity(tnt.getVelocity().add(d).multiply(0.5));
+	    tnt.setVelocity(tnt.getVelocity().add(d).multiply((double) effect.get("tossForce")));
 	    return tnt;
 	    
 	}
@@ -532,19 +541,24 @@ public class TNTEffectsManager {
 	public void tossClusterTNT(String type, Location center, int radius, int amount, boolean ellipsis) {
 		if ( ! ( hasEffect(type) ) ) return;
 		Map<String, Object> effect = getEffect(type);
-		List<Location> locations = getRandomLocationsInRadius(center, radius, amount, ellipsis);
+		if ( ! ( hasEffect((String) effect.get("clusterType")) ) ) return;
+		Map<String, Object> ceffect = getEffect((String) effect.get("clusterType"));
+		List<Location> locations = getRandomLocation(center, radius, amount);
 		if ( locations.size() > 0 ) {
 			for ( Location location : locations ) {
-				tossTNT(effect, center, location);
+				tossTNT(ceffect, center, location);
 			}
 		}
 	}
 	
 	public void tossTNT(Map<String, Object> effect, Location from, Location to) {
+		Bukkit.getLogger().info("Creating tossed TNT...");
 	    if ( effect == null ) return;
+		Bukkit.getLogger().info("Calculating Vectors...");
 	    Vector vfrom = from.getDirection();
 	    Vector vto = to.getDirection();
 	    Vector tossed = calculateVelocity(vfrom, vto, (int) effect.get("tossHeightGain"));
+		Bukkit.getLogger().info("Spawning cluster tossed");
 	    TNTPrimed tnt = createPrimedTNT(effect, 
 										from, 
 										(float) effect.get("yieldMultiplier"), 

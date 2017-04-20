@@ -1,10 +1,13 @@
 package wa.was.blastradius.events;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.TNTPrimed;
@@ -12,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import wa.was.blastradius.BlastRadius;
@@ -48,25 +52,50 @@ public class TNTPrimeEvent implements Listener {
 	private TNTLocationManager TNTManager;
 	private TNTEffectsManager TNTEffects;
 	
+	private static List<Location> waterLocations;
+	
 	public TNTPrimeEvent() {
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
 		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
+		waterLocations = new ArrayList<Location>();
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onExplosionPrime(ExplosionPrimeEvent e) {
 
-	    if ( ! ( e.getEntity() instanceof TNTPrimed ) 
-	    		|| ( e.getEntity() instanceof TNTPrimed 
-	    				&& e.getEntity().hasMetadata("tntType") ) )
-	    	return;
+	    if ( ! ( e.getEntity() instanceof TNTPrimed )  ) return;
 		
 	    TNTPrimed tnt = (TNTPrimed) e.getEntity();
 	    Location location = tnt.getLocation();
+	    String type;
+	    
+		if ( e.getEntity().hasMetadata("tntType") ) {
+			
+			MetadataValue meta = tnt.getMetadata("tntType").get(0);
+			type = meta.asString();
+			Map<String, Object> effect = TNTEffects.getEffect(type);
+
+    		if ( (boolean) effect.get("doWaterDamage") 
+    				&& location.getBlock().getType().equals(Material.WATER) ) {
+    			waterLocations.add(location);
+    			location.getBlock().setType(Material.AIR);
+    		}
+			
+			if ( (boolean) effect.get("doCluster") ) {
+				TNTEffects.tossClusterTNT(type, 
+											location, 
+											(int) effect.get("blastRadius"), 
+											(int) effect.get("clusterAmount"), 
+											(boolean) effect.get("ellipsis"));
+			}
+			
+			return;
+			
+		}
 			    
 	    if ( TNTManager.containsRelativeLocation(location) ) {
 	    	
-	    	String type = TNTManager.getRelativeType(location);
+	    	type = TNTManager.getRelativeType(location);
 	    	
 	    	if ( type != null ) {
 	    		
@@ -77,6 +106,12 @@ public class TNTPrimeEvent implements Listener {
 	    		if ( (int) effect.get("fuseTicks") > 40 ) {
 		    		e.setCancelled(true);
 		    		tnt.remove();
+	    		}
+	    		
+	    		if ( (boolean) effect.get("doWaterDamage") 
+	    				&& location.getBlock().getType().equals(Material.WATER) ) {
+	    			waterLocations.add(location);
+	    			location.getBlock().setType(Material.AIR);
 	    		}
 	    		
 	    		// Calculate new ticks
@@ -108,6 +143,16 @@ public class TNTPrimeEvent implements Listener {
 			Bukkit.getLogger().info("ExplosionPrimeEvent: "+location.toString());
 		}
 	    
+	}
+	
+	public static boolean hasRemovedWater(Location location) {
+		return waterLocations.contains(location);
+	}
+	
+	public static void removeWaterLocation(Location location) {
+		if ( waterLocations.contains(location) ) {
+			waterLocations.remove(location);
+		}
 	}
 
 }

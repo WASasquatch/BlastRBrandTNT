@@ -5,24 +5,24 @@
 
 # Effect name
 # This MUST be the same as the filename, in uppercase
-effect-name: DEFAULT
+effect-name: CLUSTER
 
 # Items Display Name
 # Default: TNT
-display-name: 'TNT'
+display-name: '&6Cluster &cBomb'
 
 # Items Lore
 # Default: null
 lore:
- - '&7Default TNT&r'
+ - '&7Launches 3 additional charges&r'
 
 # Vault Cost
 # Default: 10.00
-cost: 10.00
+cost: 50.00
 
 # Vault Worth
 # Default: 0.1
-worth: 7.50
+worth: 20.00
 
 # Fuse Ticks
 # Default: 80
@@ -52,13 +52,13 @@ tamper-proof: false
 # TNT isn't a dud in water
 # Experiemental!
 # Default: false
-tnt-water-damage: false
+tnt-water-damage: true
 
 # Tossable TNT
 # Is this TNT Tossable?
 # Experiemental!
 # Default: false
-tnt-tossable: false
+tnt-tossable: true
 
 # Tossable height gain
 # This is how heigh a tossed item will be tossed
@@ -68,23 +68,23 @@ tnt-tossable-height: 3
 # Tossable Force
 # This the power behind a throw
 # Max force 1.0 - 5.0
-# Default: 0.5
+# Default: 1.5
 tnt-tossable-force: 0.5
 
 # Tossable Cooldwon in Seconds
-tnt-tossable-cooldown: 10
+tnt-tossable-cooldown: 5
 
 # TNT Cluster Effect
 # TNT will explode and launch more TNT
 # Experiemental!
 # Default: false
-tnt-cluster-effect: false
+tnt-cluster-effect: true
 
 # TNT Cluster Effect Tyupe
 # Default: DEFAULT
 # Remember to change this to an existing
 # Type if you remove/change default.yml
-tnt-cluster-effect-type: DEFAULT
+tnt-cluster-effect-type: CLUSTER_DROP
 
 # TNT Cluster Effect Amount
 # How many TNT spawn from cluster effect
