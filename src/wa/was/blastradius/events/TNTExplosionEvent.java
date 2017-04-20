@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 
@@ -16,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import wa.was.blastradius.BlastRadius;
 import wa.was.blastradius.commands.OnCommand;
@@ -56,8 +59,8 @@ public class TNTExplosionEvent implements Listener {
 	private PotionEffectsManager potionManager;
 	private BlastEffectManager blastManager;
 	
-	public TNTExplosionEvent(JavaPlugin plug) {
-		plugin = plug;
+	public TNTExplosionEvent() {
+		plugin = BlastRadius.getBlastRadiusPluginInstance();
 		TNTManager = ((BlastRadius)plugin).getTNTLocationManager();
 		TNTEffects = ((BlastRadius)plugin).getTNTEffectsManager();
 		potionManager = ((BlastRadius)plugin).getPotionEffectsManager();
@@ -67,6 +70,40 @@ public class TNTExplosionEvent implements Listener {
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void tntExplosion(EntityExplodeEvent e) {
+		
+		for ( Block block : e.blockList() ) {
+			if ( block.getType().equals(Material.TNT) ) {
+				if ( TNTManager.containsRelativeLocation(block.getLocation()) ) {
+					
+					Location location = block.getLocation();
+					String type = TNTManager.getRelativeType(location);
+					Map<String, Object> effect = TNTEffects.getEffect(type);
+					
+					block.setType(Material.AIR);
+					
+		    		if ( (boolean) effect.get("doWaterDamage") 
+		    				&& location.getBlock().getType().equals(Material.WATER) ) {
+		    			TNTPrimeEvent.addWaterLocation(location);
+		    			location.getBlock().setType(Material.AIR);
+		    		}
+		    		
+		    		// Calculate new ticks
+		    		int ticks = ( ( effect.get("fuseTicks") != null ) ? 
+		    					( ( (int) effect.get("fuseTicks") > 40 ) ? 
+		    					(int) effect.get("fuseTicks") - 40 : 1 ) : 1 );
+		    		
+			    	TNTPrimed blastRTNT = TNTEffects.createPrimedTNT(effect, 
+			    													location, 
+			    													(float) effect.get("yieldMultiplier"), 
+			    													ticks, 
+			    													(Sound) effect.get("fuseEffect"), 
+			    													(float) effect.get("fuseEffectVolume"),
+			    													(float) effect.get("fuseEffectPitch"));
+			    	blastRTNT.setVelocity(new Vector(0, 0, 0));
+					
+				}
+			}
+		}
 		
 		if ( ! ( e.getEntity() instanceof TNTPrimed ) || e.isCancelled() ) return;
 		
@@ -95,71 +132,47 @@ public class TNTExplosionEvent implements Listener {
 		
 		if ( TNTEffects.hasEffect(type) ) {
 			
+			Map<String, Object> effect = TNTEffects.getEffect(type);
+			
 			if ( plugin.getConfig().getBoolean("notify-owner") ) {
 				Player owner = Bukkit.getServer().getPlayer(TNTManager.getOwner(location));
 				if ( owner != null && owner.isOnline() ) {
 					owner.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 							plugin.getConfig().getString("notify-message")
-								.replace("{TYPE}", type)
+								.replace("{TYPE}", (String) effect.get("displayName"))
 								.replace("{LOCATION}", location.getX()+", "+location.getY()+", "+location.getZ())));
 
 				}
 			}
 			
-			Map<String, Object> effect = TNTEffects.getEffect(type);
-			
-			TNTManager.removeRelativePlayersTNT(TNTManager.getOwner(location), location);
+			TNTManager.removeTNT(location);
 			
 			if ( TNTPrimeEvent.hasRemovedWater(location) ) {
 				location.getBlock().setType(Material.WATER);
 			}
 			
-			if ( ( (boolean) effect.get("doWaterDamage") ) ) {
-			
-				blastManager.createBlastRadius(location, 
-												(List<Material>) effect.get("innerMaterials"), 
-												(List<Material>) effect.get("outerMaterials"), 
-												(List<Material>) effect.get("protectedMaterials"), 
-												(List<Material>) effect.get("obliterateMaterials"), 
-												(boolean) effect.get("obliterate"), 
-												(boolean) effect.get("doFires"), 
-												(boolean) effect.get("doSmoke"), 
-												(int) effect.get("smokeCount"), 
-												(double) effect.get("smokeOffset"),  
-												(int) effect.get("blastRadius"), 
-												(int) effect.get("fireRadius"),
-												(boolean) effect.get("ellipsis"));
-				
-				potionManager.createPlayerSet("explosion-event");
-				potionManager.addPlayersInRadius("explosion-event", location, (int) effect.get("blastRadius"), (boolean) effect.get("ellipsis"));
-				potionManager.applySetToPlayers(type, "explosion-event");
-				
-			} else {
-				
-				if ( ! ( location.getBlock().getType().equals(Material.WATER) ) ) {
-				
-					blastManager.createBlastRadius(location, 
-							(List<Material>) effect.get("innerMaterials"), 
-							(List<Material>) effect.get("outerMaterials"), 
-							(List<Material>) effect.get("protectedMaterials"), 
-							(List<Material>) effect.get("obliterateMaterials"), 
-							(boolean) effect.get("obliterate"), 
-							(boolean) effect.get("doFires"), 
-							(boolean) effect.get("doSmoke"), 
-							(int) effect.get("smokeCount"), 
-							(double) effect.get("smokeOffset"),  
-							(int) effect.get("blastRadius"), 
-							(int) effect.get("fireRadius"),
-							(boolean) effect.get("ellipsis"));
-	
-					potionManager.createPlayerSet("explosion-event");
-					potionManager.addPlayersInRadius("explosion-event", location, (int) effect.get("blastRadius"), (boolean) effect.get("ellipsis"));
-					potionManager.applySetToPlayers(type, "explosion-event");
-				
-				}
-				
-				
+			if ( ! ( (boolean) effect.get("doWaterDamage") ) 
+					&& location.getBlock().getType().equals(Material.WATER) ) {
+				return;
 			}
+			
+			blastManager.createBlastRadius(location, 
+											(List<Material>) effect.get("innerMaterials"), 
+											(List<Material>) effect.get("outerMaterials"), 
+											(List<Material>) effect.get("protectedMaterials"), 
+											(List<Material>) effect.get("obliterateMaterials"), 
+											(boolean) effect.get("obliterate"), 
+											(boolean) effect.get("doFires"), 
+											(boolean) effect.get("doSmoke"), 
+											(int) effect.get("smokeCount"), 
+											(double) effect.get("smokeOffset"),  
+											(int) effect.get("blastRadius"), 
+											(int) effect.get("fireRadius"),
+											(boolean) effect.get("ellipsis"));
+				
+			potionManager.createPlayerSet("explosion-event");
+			potionManager.addPlayersInRadius("explosion-event", location, (int) effect.get("blastRadius"), (boolean) effect.get("ellipsis"));
+			potionManager.applySetToPlayers(type, "explosion-event");
 			
 		}
 		

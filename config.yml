@@ -8,7 +8,7 @@ show-player-messages: true
 notify-owner: true
 
 # Message to send a player when their TNT has detonated
-notify-message: '&6You Blastr Brand TNT &r{TYPE} &6has detonated at &r{LOCATION}'
+notify-message: '&6Your Blastr Brand TNT &r{TYPE} &6has detonated at &r{LOCATION}'
 
 # Price Color/Format
 # Used for {PRICE} if not using free

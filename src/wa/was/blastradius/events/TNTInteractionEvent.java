@@ -1,14 +1,18 @@
 package wa.was.blastradius.events;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -46,7 +50,7 @@ import wa.was.blastradius.managers.TNTLocationManager;
  *	
  *************************/
 
-public class TNTInteractOrTossEvent implements Listener {
+public class TNTInteractionEvent implements Listener {
 	
 	private JavaPlugin plugin;
 	
@@ -55,7 +59,7 @@ public class TNTInteractOrTossEvent implements Listener {
 	
 	private Map<UUID, Long> cooldowns;
 	
-	public TNTInteractOrTossEvent(JavaPlugin plugin) {
+	public TNTInteractionEvent(JavaPlugin plugin) {
 		this.plugin = plugin;
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
 		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
@@ -67,7 +71,8 @@ public class TNTInteractOrTossEvent implements Listener {
 		
 		if ( e.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
 				&& e.getClickedBlock().getType().equals(Material.TNT)
-					&& ( e.getItem() != null && e.getItem().getType().equals(Material.FLINT_AND_STEEL) )
+					&& ( e.getItem() != null && ( e.getItem().getType().equals(Material.FLINT_AND_STEEL)
+							|| e.getItem().getType().equals(Material.FIREBALL) ) )
 						&& TNTManager.containsLocation(e.getClickedBlock().getLocation()) ) {
 			
 			Location location = e.getClickedBlock().getLocation();
@@ -84,23 +89,69 @@ public class TNTInteractOrTossEvent implements Listener {
 										(Sound) effect.get("fuseEffect"), 
 										(float) effect.get("fuseEffectPitch"),
 										(float) effect.get("fuseEffectPitch"));
+			TNTManager.removeTNT(location);
 			
 		}
 		
 		if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) ) {
-			
-			if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
-				e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.no-permission")));
-				return;
-			}
 			
 			ItemStack item = e.getItem();
 			
 			if ( item.hasItemMeta() ) {
 				
 				ItemMeta meta = e.getItem().getItemMeta();
-				
-				if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
+					
+				if ( TNTEffects.isRemoteDetonator(item) ) {
+						
+					String type = TNTEffects.remoteDetonatorsType(meta.getDisplayName());
+						
+					if ( TNTEffects.hasEffect(type) ) {
+
+						Map<String, Object> effect = TNTEffects.getEffect(type);
+						
+						if ( ! ( (boolean) effect.get("remoteDetonation") ) ) {
+							e.setCancelled(true);
+							return;
+						}
+
+						List<Location> locations = TNTManager.getPlayerLocationsByType(e.getPlayer().getUniqueId(), type);
+							
+						e.getPlayer().playSound(e.getPlayer().getLocation(), 
+												(Sound) effect.get("detonatorEffect"),
+												(float) effect.get("detonatorEffectVolume"), 
+												(float) effect.get("detonatorEffectPitch"));
+							
+						if ( locations.size() > 0 ) {
+							for ( Location location : locations ) {
+									
+								if ( ! ( location.getChunk().isLoaded() ) 
+										|| ! ( location.getBlock().getType().equals(Material.TNT) ) ) continue;
+									
+								Block block = location.getBlock();
+								block.setType(Material.AIR);
+						    		
+							   	TNTEffects.createPrimedTNT(effect, 
+							   								location, 
+							   								(float) effect.get("yieldMultiplier"), 
+							   								(int) effect.get("fuseTicks"), 
+							   								(Sound) effect.get("fuseEffect"), 
+							   								(float) effect.get("fuseEffectVolume"),
+							   								(float) effect.get("fuseEffectPitch"));
+									
+							}
+						}
+						
+					}
+						
+					e.setCancelled(true);
+					return;
+					
+				} else if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
+					
+					if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
+						e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.no-permission")));
+						return;
+					}
 					
 					String type = TNTEffects.displayNameToType(meta.getDisplayName());
 					Map<String, Object> effect = TNTEffects.getEffect(type);
@@ -127,8 +178,13 @@ public class TNTInteractOrTossEvent implements Listener {
 				
 						}
 				
+						e.setCancelled(true);
 						TNTEffects.playerTossTNT(effect, e.getPlayer());
+						if ( ! ( e.getPlayer().getGameMode().equals(GameMode.CREATIVE) ) ) {
+							removeMainHand(e.getPlayer());
+						}
 						cooldowns.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + (int) effect.get("tossCooldown") * 1000);
+						return;
 						
 					}
 				
@@ -138,6 +194,16 @@ public class TNTInteractOrTossEvent implements Listener {
 			
 		}
 		
+	}
+	
+	public void removeMainHand(Player player) {
+		ItemStack item = player.getInventory().getItemInMainHand();
+		if ( item.getAmount() > 1 ) {
+			item.setAmount(item.getAmount() - 1);
+		} else {
+			item = null;
+		}
+		player.getInventory().setItemInMainHand(item);
 	}
 
 }

@@ -1,17 +1,16 @@
 package wa.was.blastradius.events;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import java.util.Map;
+
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.event.block.BlockSpreadEvent;
 
 import wa.was.blastradius.BlastRadius;
-import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.managers.TNTEffectsManager;
 import wa.was.blastradius.managers.TNTLocationManager;
 
@@ -39,46 +38,52 @@ import wa.was.blastradius.managers.TNTLocationManager;
  *	
  *************************/
 
-public class TNTPlaceEvent implements Listener {
+public class TNTSpreadEvent implements Listener {
 	
 	private TNTLocationManager TNTManager;
 	private TNTEffectsManager TNTEffects;
 	
-	public TNTPlaceEvent() {
+	public TNTSpreadEvent() {
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
 		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
-	public void onPlaceTNT(BlockPlaceEvent e) {
+	public void onSpread(BlockSpreadEvent e) {
+		if ( e.isCancelled() ) return;
 		
-		if ( e.isCancelled() || ! ( e.getBlockPlaced().getType().equals(Material.TNT) ) ) return;
+		Block source = e.getSource();
+		Block target = e.getBlock();
 		
-		Player player = e.getPlayer();
-		
-		if ( e.getItemInHand().hasItemMeta() ) {
-			
-			ItemMeta meta = e.getItemInHand().getItemMeta();
-			if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
+		if ( source.getType().equals(Material.FIRE) 
+				|| source.getType().equals(Material.LAVA) ) {
+			if ( target.getType().equals(Material.TNT) ) {
 				
-				String type = TNTEffects.displayNameToType(meta.getDisplayName());
-				Location loc = e.getBlockPlaced().getLocation();
-				
-				if ( ! ( player.hasPermission("blastradius.place."+type) ) )  {
-					e.setCancelled(true);
-					return;
-				}
-				
-				TNTManager.addTNT(player, type, loc);
-				
-				if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
+				if ( TNTManager.containsLocation(target.getLocation()) ) {
 					
-					Bukkit.getLogger().info("TNT Type: "+type+" Placed By: "+player.getUniqueId().toString()+" Location: "+loc.getBlockX()+", "+loc.getY()+", "+loc.getZ());
+					String type = TNTManager.getType(target.getLocation());
+					
+					if ( TNTEffects.hasEffect(type) ) {
+						
+						Map<String, Object> effect = TNTEffects.getEffect(type);
+						
+						target.setType(Material.AIR);
+						
+						TNTEffects.createPrimedTNT(effect, 
+								target.getLocation(), 
+								(float) effect.get("yieldMultiplier"), 
+								(int) effect.get("fuseTicks"), 
+								(Sound) effect.get("fuseEffect"), 
+								(float) effect.get("fuseEffectPitch"),
+								(float) effect.get("fuseEffectPitch"));
+						
+						TNTManager.removeTNT(target.getLocation());
+						
+					}
 					
 				}
 				
 			}
-			
 		}
 		
 	}

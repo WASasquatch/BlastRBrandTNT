@@ -121,18 +121,26 @@ public class OnCommand implements CommandExecutor {
 									price = config.getString("price-format", "&2")+vault.format((double)effect.get("vaultCost")*amount);
 								}
 								
-								ItemStack item = new ItemStack(Material.TNT, amount);
-								ItemMeta meta = item.getItemMeta();
-								meta.setDisplayName((String) effect.get("displayName"));
-								meta.setLore((List<String>) effect.get("lore"));
-								item.setItemMeta(meta);
+								ItemStack tnt = new ItemStack(Material.TNT, amount);
+								ItemMeta tntMeta = tnt.getItemMeta();
+								tntMeta.setDisplayName((String) effect.get("displayName"));
+								tntMeta.setLore((List<String>) effect.get("lore"));
+								tnt.setItemMeta(tntMeta);
 								
-								player.getInventory().addItem(item);
+								if ( (boolean) effect.get("remoteDetonation") ) {
+									ItemStack detonator = new ItemStack((Material) effect.get("remoteDetonator"), 1);
+									ItemMeta detMeta = detonator.getItemMeta();
+									detMeta.setDisplayName((String) effect.get("remoteDetonatorName"));
+									detonator.setItemMeta(detMeta);
+									player.getInventory().addItem(detonator);
+								}
+								
+								player.getInventory().addItem(tnt);
 								player.updateInventory();
 								
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.purchase-success")
 										.replace("{AMOUNT}", ""+amount)
-										.replace("{TYPE}", type)
+										.replace("{TYPE}", (String) effect.get("displayName"))
 										.replace("{PRICE}", price)));
 
 							} else {
@@ -141,7 +149,7 @@ public class OnCommand implements CommandExecutor {
 								
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.purchase-fail")
 										.replace("{AMOUNT}", ""+amount)
-										.replace("{TYPE}", type)
+										.replace("{TYPE}", (String) effect.get("displayName"))
 										.replace("{PRICE}", price)));
 								
 							}
@@ -213,14 +221,14 @@ public class OnCommand implements CommandExecutor {
 								
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.sold-success")
 										.replace("{AMOUNT}", ""+amount)
-										.replace("{TYPE}", type)
+										.replace("{TYPE}", (String) effect.get("displayName"))
 										.replace("{PRICE}", received)));
 								
 							} else {
 								
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.sold-fail")
 										.replace("{AMOUNT}", ""+amount)
-										.replace("{TYPE}", type)));
+										.replace("{TYPE}", (String) effect.get("displayName"))));
 								
 							}
 							
@@ -281,13 +289,21 @@ public class OnCommand implements CommandExecutor {
 							}
 							
 								
-							ItemStack item = new ItemStack(Material.TNT, amount);
-							ItemMeta meta = item.getItemMeta();
-							meta.setDisplayName((String) effect.get("displayName"));
-							meta.setLore((List<String>) effect.get("lore"));
-							item.setItemMeta(meta);
+							ItemStack tnt = new ItemStack(Material.TNT, amount);
+							ItemMeta tntMeta = tnt.getItemMeta();
+							tntMeta.setDisplayName((String) effect.get("displayName"));
+							tntMeta.setLore((List<String>) effect.get("lore"));
+							tnt.setItemMeta(tntMeta);
+							
+							if ( (boolean) effect.get("remoteDetonation") ) {
+								ItemStack detonator = new ItemStack((Material) effect.get("remoteDetonator"), 1);
+								ItemMeta detMeta = detonator.getItemMeta();
+								detMeta.setDisplayName((String) effect.get("remoteDetonatorName"));
+								detonator.setItemMeta(detMeta);
+								player.getInventory().addItem(detonator);
+							}
 								
-							target.getInventory().addItem(item);
+							target.getInventory().addItem(tnt);
 							target.updateInventory();
 							
 							if ( sender instanceof Player ) {
@@ -295,25 +311,25 @@ public class OnCommand implements CommandExecutor {
 								
 									sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.give-success")
 											.replace("{AMOUNT}", ""+amount)
-											.replace("{TYPE}", type)
+											.replace("{TYPE}", (String) effect.get("displayName"))
 											.replace("{PLAYER}", args[1])));
 								
 								} else {
 									
 									sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.give-other-success")
 											.replace("{AMOUNT}", ""+amount)
-											.replace("{TYPE}", type)
+											.replace("{TYPE}", (String) effect.get("displayName"))
 											.replace("{PLAYER}", args[1])));
 									target.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.gave-success")
 											.replace("{AMOUNT}", ""+amount)
-											.replace("{TYPE}", type))
+											.replace("{TYPE}", (String) effect.get("displayName")))
 											.replace("{PLAYER}", args[1]));
 									
 								}
 							} else {
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.give-other-success")
 										.replace("{AMOUNT}", ""+amount)
-										.replace("{TYPE}", type)
+										.replace("{TYPE}", (String) effect.get("displayName"))
 										.replace("{PLAYER}", args[1])));
 							}
 							
@@ -384,10 +400,8 @@ public class OnCommand implements CommandExecutor {
 	}
 	
 	public boolean hasEnoughOfType(Player player, String displayName, int amount) {
-		
 		int sum = 0;
 		for ( int i = 0; i < player.getInventory().getSize(); i++ ) {
-			
 			ItemStack item = player.getInventory().getItem(i);
 			if ( item != null && item.getType().equals(Material.TNT) ) {
 				ItemMeta meta = item.getItemMeta();
@@ -398,23 +412,17 @@ public class OnCommand implements CommandExecutor {
 				    }
 				}	
 			}
-			
 			if ( i == player.getInventory().getSize() && sum < amount ) {
 				return false;
 			}
-			
 		}
-		
 		return false;
-		
 	}
 	
 	public boolean removeType(Player player, String displayName, int amount) {
-		
 		List<Integer> slots =  new ArrayList<Integer>();
 		int sum = 0;
 		for ( int i = 0; i < player.getInventory().getSize(); i++ ) {
-			
 			ItemStack item = player.getInventory().getItem(i);
 			if ( item != null && item.getType().equals(Material.TNT) ) {
 				ItemMeta meta = item.getItemMeta();
@@ -425,19 +433,13 @@ public class OnCommand implements CommandExecutor {
 				    	break;
 				    }
 				}
-				
 			}
-			
 			if ( i == player.getInventory().getSize() && sum < amount ) {
 				return false;
 			}
-			
 		}
-		
 		int rem = 0;
-		
 		if ( sum > 0 ) {
-			
 			for ( int i : slots ) {
 				ItemStack item = player.getInventory().getItem(i);
 				if ( item.getAmount() > amount ) {
@@ -456,14 +458,10 @@ public class OnCommand implements CommandExecutor {
 					rem = rem + amount;
 					player.updateInventory();
 				}
-
 			}
-			
-		}
-		
+		}	
 		itemsRemoved = rem;
 		return false;
-		
 	}
 
 }

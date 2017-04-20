@@ -6,10 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -134,11 +134,23 @@ public class TNTLocationManager {
 		return null;
 	}
 	
-	public Collection<Location> getLocations(UUID uuid) {
-		Collection<Location> locs = Collections.emptySet();
+	public List<Location> getPlayerLocations(UUID uuid) {
+		List<Location> locs = new ArrayList<Location>();
 		if ( placedTNT.containsKey(uuid) ) {
 			for ( Location loc : placedTNT.get(uuid).keySet() ) {
 				locs.add(loc);
+			}
+		}
+		return locs;
+	}
+	
+	public List<Location> getPlayerLocationsByType(UUID uuid, String type) {
+		List<Location> locs = new ArrayList<Location>();
+		if ( placedTNT.containsKey(uuid) ) {
+			for ( Map.Entry<Location, String> entry : placedTNT.get(uuid).entrySet() ) {
+				if ( entry.getValue().equals(type) ) {
+					locs.add(entry.getKey());
+				}
 			}
 		}
 		return locs;

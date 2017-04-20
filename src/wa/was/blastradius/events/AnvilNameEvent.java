@@ -1,13 +1,16 @@
 package wa.was.blastradius.events;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import wa.was.blastradius.BlastRadius;
 import wa.was.blastradius.commands.OnCommand;
@@ -40,9 +43,11 @@ import wa.was.blastradius.managers.TNTEffectsManager;
 public class AnvilNameEvent implements Listener {
 	
 	private TNTEffectsManager TNTEffects;
+	private FileConfiguration config;
 	
-	public AnvilNameEvent(JavaPlugin plugin) {
-		TNTEffects = ((BlastRadius)plugin).getTNTEffectsManager();
+	public AnvilNameEvent() {
+		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
+		config = BlastRadius.getBlastRadiusPluginInstance().getConfig();
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
@@ -65,6 +70,13 @@ public class AnvilNameEvent implements Listener {
 				meta.setDisplayName(null);
 				meta.getLore().clear();
 				item.setItemMeta(meta);
+				
+				for ( HumanEntity viewer : e.getViewers() ) {
+					Player player =  (Player) viewer;
+					if ( player.isValid() && player.isOnline() ) {
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+					}
+				}
 				
 				if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
 					BlastRadius.getBlastRadiusInstance().getLogger().info("PrepareAnvilEvent: Attempted to rename TNT to BlastR Brand type: "+type);

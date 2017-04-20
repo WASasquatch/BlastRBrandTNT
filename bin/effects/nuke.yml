@@ -65,6 +65,7 @@ tnt-water-damage: false
 
 # Tossable TNT
 # Is this TNT Tossable?
+# Experiemental! - Cannot use with remote detonation
 # Default: false
 tnt-tossable: false
 
@@ -105,6 +106,28 @@ tnt-cluster-effect-amount: 3
 # source of the explosion.
 # Default: 10.0
 tnt-cluster-effect-height-offset: 10.0
+
+# TNT Remote Detonation
+# Default: false
+remote-detonation: false
+
+# Remote Detonator Material
+# Default: STONE_BUTTON
+remote-detonator-material: STONE_BUTTON
+
+# Detonator Effect Sound
+# Default: BLOCK_NOTE_PLING
+detonator-effect: BLOCK_NOTE_PLING
+
+# Detonator Sound Pitch
+# Range 0.5 - 2.0
+# Default: (float) 1.5
+detonator-effect-pitch: 1.5
+
+# Detonaor Sound Volume
+# Range 0 - 12.0
+# Default: (float) 1
+detonator-effect-volume: 1.0
 
 # Allow fires to randomly spawn from TNT
 # Default: true
@@ -235,6 +258,7 @@ outer-blast-materials:
 protected-materials:
  - BEDROCK
  - WATER
+ - LAVA
  - STATIONARY_LAVA
  - STATIONARY_WATER
  - TNT

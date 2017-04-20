@@ -94,9 +94,7 @@ public class TNTPrimeEvent implements Listener {
 			
 			return;
 			
-		}
-			    
-	    if ( ! ( e.getEntity().hasMetadata("tntType") ) && TNTManager.containsRelativeLocation(location) ) {
+		} else if ( TNTManager.containsRelativeLocation(location) ) {
 	    	
 	    	type = TNTManager.getRelativeType(location);
 	    	
@@ -127,7 +125,7 @@ public class TNTPrimeEvent implements Listener {
 		    													(float) effect.get("yieldMultiplier"), 
 		    													ticks, 
 		    													(Sound) effect.get("fuseEffect"), 
-		    													(float) effect.get("fuseEffectPitch"),
+		    													(float) effect.get("fuseEffectVolume"),
 		    													(float) effect.get("fuseEffectPitch"));
 		    	blastRTNT.setVelocity(new Vector(0, 0, 0));
 		    	
@@ -147,6 +145,10 @@ public class TNTPrimeEvent implements Listener {
 			Bukkit.getLogger().info("ExplosionPrimeEvent: "+location.toString());
 		}
 	    
+	}
+	
+	public static void addWaterLocation(Location location) {
+		waterLocations.add(location);
 	}
 	
 	public static boolean hasRemovedWater(Location location) {

@@ -5,10 +5,11 @@ import java.io.File;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import wa.was.blastradius.events.TNTRemovedEvent;
+import wa.was.blastradius.events.TNTSpreadEvent;
 import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.events.AnvilNameEvent;
 import wa.was.blastradius.events.TNTExplosionEvent;
-import wa.was.blastradius.events.TNTInteractOrTossEvent;
+import wa.was.blastradius.events.TNTInteractionEvent;
 import wa.was.blastradius.events.TNTPrimeEvent;
 //import wa.was.blastradius.events.TNTRedstoneEvent;
 import wa.was.blastradius.events.TNTPlaceEvent;
@@ -88,13 +89,14 @@ public class BlastRadius extends JavaPlugin {
 		
 		TNTManager.loadPlacedTNT();
 
-		getServer().getPluginManager().registerEvents(new TNTExplosionEvent(this), this);
+		getServer().getPluginManager().registerEvents(new TNTExplosionEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTRemovedEvent(), this);
+		getServer().getPluginManager().registerEvents(new TNTInteractionEvent(this), this);
+		getServer().getPluginManager().registerEvents(new TNTSpreadEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTPrimeEvent(), this); // Would love to have a actual prime event
-		getServer().getPluginManager().registerEvents(new TNTPlaceEvent(this), this);
-		//getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTInteractOrTossEvent(this), this);
-		getServer().getPluginManager().registerEvents(new AnvilNameEvent(this), this);
+		getServer().getPluginManager().registerEvents(new TNTPlaceEvent(), this);
+		// getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this); // Terrible Logic... relying on location manager
+		getServer().getPluginManager().registerEvents(new AnvilNameEvent(), this);
 		
 		getCommand("blastr").setExecutor(new OnCommand(this));
 		
