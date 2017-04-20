@@ -81,8 +81,9 @@ public class TNTInteractOrTossEvent implements Listener {
 										location, 
 										(float) effect.get("yieldMultiplier"), 
 										(int) effect.get("fuseTicks"), 
-										(Sound) effect.get("soundEffect"), 
-										(float) effect.get("soundEffectPitch"));
+										(Sound) effect.get("fuseEffect"), 
+										(float) effect.get("fuseEffectPitch"),
+										(float) effect.get("fuseEffectPitch"));
 			
 		}
 		

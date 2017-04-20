@@ -30,21 +30,26 @@ tnt-receivable: false
 
 # Fuse Ticks
 # Default: 80
-fuse-ticks: 80
+fuse-ticks: 40
 
 # Fuse Sound
 # Default: ENTITY_TNT_PRIMED 
-sound-effect: ENTITY_TNT_PRIMED
+fuse-effect: ENTITY_FIREWORK_LAUNCH
 
 # Fuse Sound Pitch
 # Range 0.5 - 2.0
 # Default: (float) 1
-sound-effect-pitch: 1
+fuse-effect-pitch: 0.5
+
+# Fuse Sound Volume
+# Range 0 - 12.0
+# Default: (float) 1
+fuse-effect-volume: 3.0
 
 # Explosion Volume (Not Implemented)
 # See: https://bukkit.org/threads/playsound-parameters-volume-and-pitch.151517/
 # Default: 2
-sound-explosion-volume: 2
+sound-explosion-volume: 3
 
 # Temper Proof
 # If a TNT is Tmper Proof anyone that is NOT the 
@@ -71,7 +76,7 @@ tnt-tossable-height: 3
 
 # Tossable Force
 # This the power behind a throw
-# Max force 1.0 - 5.0
+# Max force 0 - 5.0
 # Default: 1.5
 tnt-tossable-force: 0.5
 
@@ -94,6 +99,12 @@ tnt-cluster-effect-type: DEFAULT
 # How many TNT spawn from cluster effect
 # Default: 3
 tnt-cluster-effect-amount: 3
+
+# TNT Cluster Height Offset
+# Effects how far cluster drops fire from the
+# source of the explosion.
+# Default: 10.0
+tnt-cluster-effect-height-offset: 10.0
 
 # Allow fires to randomly spawn from TNT
 # Default: true

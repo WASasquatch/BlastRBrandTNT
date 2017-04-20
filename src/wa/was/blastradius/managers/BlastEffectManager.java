@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -118,9 +119,8 @@ public class BlastEffectManager {
                     		if ( ! ( pmats.contains(block.getType())) 
                     				&&  block.getType().isFlammable() 
                     					|| block.getType().equals(Material.NETHERRACK) ) {
-                    				if ( blockAbove.getType().equals(Material.AIR) && randomInteger(0, threshold, new Random()) > 5 )
-                    					blockAbove.setType(Material.FIRE);
-                    			
+                    			if ( blockAbove.getType().equals(Material.AIR) && randomInteger(0, threshold, new Random()) > 5 )
+                    				blockAbove.setType(Material.FIRE);
                     		}
                     	}
                     	
@@ -154,7 +154,7 @@ public class BlastEffectManager {
                     			if ( ! ( obliterate ) ) {
                     				block.breakNaturally();
                     			}
-                    			block.setType(Material.AIR);
+                				block.setType(Material.AIR);
                     		}
                     			
                     	}

@@ -113,8 +113,9 @@ public class TNTRedstoneEvent implements Listener {
 												location, 
 												(float) effect.get("yieldMultiplier"), 
 												(int) effect.get("fuseTicks"),
-												(Sound) effect.get("soundEffect"), 
-												(float) effect.get("soundEffectPitch"));
+												(Sound) effect.get("fuseEffect"), 
+												(float) effect.get("fuseEffectPitch"),
+												(float) effect.get("fuseEffectPitch"));
 					
 					if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
 						Bukkit.getLogger().info("BlockRedstoneEvent Material: "+e.getBlock().getType()+" at Location: "+e.getBlock().getLocation());

@@ -8,7 +8,6 @@ import wa.was.blastradius.events.TNTRemovedEvent;
 import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.events.AnvilNameEvent;
 import wa.was.blastradius.events.TNTExplosionEvent;
-import wa.was.blastradius.events.TNTFallingEvent;
 import wa.was.blastradius.events.TNTInteractOrTossEvent;
 import wa.was.blastradius.events.TNTPrimeEvent;
 //import wa.was.blastradius.events.TNTRedstoneEvent;
@@ -17,7 +16,6 @@ import wa.was.blastradius.managers.BlastEffectManager;
 import wa.was.blastradius.managers.PotionEffectsManager;
 import wa.was.blastradius.managers.TNTEffectsManager;
 import wa.was.blastradius.managers.TNTLocationManager;
-//import wa.was.blastradius.nms.TNTPrimeSpawn_v1_11_R1;
 import wa.was.blastradius.utils.ConsoleColor;
 
 /*************************
@@ -77,9 +75,7 @@ public class BlastRadius extends JavaPlugin {
 		potionManager = PotionEffectsManager.getInstance();
 		TNTManager = TNTLocationManager.getInstance();
 		TNTEffects = TNTEffectsManager.getInstance();
-		blastManager = BlastEffectManager.getinstance(this);
-		
-		//new TNTPrimeSpawn_v1_11_R1(); // I clearly don't understand NMS Overrides...
+		blastManager = BlastEffectManager.getinstance(this);	
 		
 		if ( getConfig().getBoolean("show-player-messages") ) {
 			doMessages = true;
@@ -96,7 +92,6 @@ public class BlastRadius extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new TNTRemovedEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTPrimeEvent(), this); // Would love to have a actual prime event
 		getServer().getPluginManager().registerEvents(new TNTPlaceEvent(this), this);
-		getServer().getPluginManager().registerEvents(new TNTFallingEvent(), this);
 		//getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTInteractOrTossEvent(this), this);
 		getServer().getPluginManager().registerEvents(new AnvilNameEvent(this), this);

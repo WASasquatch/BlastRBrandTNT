@@ -80,6 +80,7 @@ public class TNTPrimeEvent implements Listener {
     			waterLocations.add(location);
     			location.getBlock().setType(Material.AIR);
     		}
+    		
 			
 			if ( (boolean) effect.get("doCluster") ) {
 				TNTEffects.tossClusterTNT(type, 
@@ -123,8 +124,9 @@ public class TNTPrimeEvent implements Listener {
 		    													location, 
 		    													(float) effect.get("yieldMultiplier"), 
 		    													ticks, 
-		    													(Sound) effect.get("soundEffect"), 
-		    													(float) effect.get("soundEffectPitch"));
+		    													(Sound) effect.get("fuseEffect"), 
+		    													(float) effect.get("fuseEffectPitch"),
+		    													(float) effect.get("fuseEffectPitch"));
 		    	blastRTNT.setVelocity(new Vector(0, 0, 0));
 		    	
 				if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {

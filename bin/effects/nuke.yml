@@ -25,18 +25,26 @@ cost: 100.00
 # Default: 0.10
 worth: 45.00
 
+# Can Buy/Give
+tnt-receivable: true
+
 # Fuse Ticks
 # Default: 80
 fuse-ticks: 80
 
 # Fuse Sound
 # Default: ENTITY_TNT_PRIMED 
-sound-effect: BLOCK_NOTE_BASS
+fuse-effect: BLOCK_NOTE_BASS
 
 # Fuse Sound Pitch
 # Range 0.5 - 2.0
 # Default: (float) 1
-sound-effect-pitch: 2.0
+fuse-effect-pitch: 2.0
+
+# Fuse Sound Volume
+# Range 0 - 12.0
+# Default: (float) 1
+fuse-effect-volume: 3.0
 
 # Explosion Volume (Not Implemented)
 # See: https://bukkit.org/threads/playsound-parameters-volume-and-pitch.151517/
@@ -68,7 +76,7 @@ tnt-tossable-height: 3
 
 # Tossable Force
 # This the power behind a throw
-# Max force 1.0 - 5.0
+# Max force 0 - 5.0
 # Default: 0.5
 tnt-tossable-force: 0.5
 
@@ -91,6 +99,12 @@ tnt-cluster-effect-type: DEFAULT
 # How many TNT spawn from cluster effect
 # Default: 3
 tnt-cluster-effect-amount: 3
+
+# TNT Cluster Height Offset
+# Effects how far cluster drops fire from the
+# source of the explosion.
+# Default: 10.0
+tnt-cluster-effect-height-offset: 10.0
 
 # Allow fires to randomly spawn from TNT
 # Default: true

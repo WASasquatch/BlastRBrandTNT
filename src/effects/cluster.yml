@@ -14,7 +14,7 @@ display-name: '&6Cluster &cBomb'
 # Items Lore
 # Default: null
 lore:
- - '&7Launches 3 additional charges&r'
+ - '&7Launches &r3 additional &ccharges&r'
 
 # Vault Cost
 # Default: 10.00
@@ -24,23 +24,31 @@ cost: 50.00
 # Default: 0.1
 worth: 20.00
 
+# Can Buy/Give
+tnt-receivable: true
+
 # Fuse Ticks
 # Default: 80
 fuse-ticks: 80
 
 # Fuse Sound
 # Default: ENTITY_TNT_PRIMED 
-sound-effect: ENTITY_TNT_PRIMED
+fuse-effect: ENTITY_SHULKER_SHOOT
 
 # Fuse Sound Pitch
 # Range 0.5 - 2.0
 # Default: (float) 1
-sound-effect-pitch: 1
+fuse-effect-pitch: 0.5
+
+# Fuse Sound Volume
+# Range 0 - 12.0
+# Default: (float) 1
+fuse-effect-volume: 3.0
 
 # Explosion Volume (Not Implemented)
 # See: https://bukkit.org/threads/playsound-parameters-volume-and-pitch.151517/
 # Default: 2
-sound-explosion-volume: 2
+sound-explosion-volume: 3
 
 # Temper Proof
 # If a TNT is Tmper Proof anyone that is NOT the 
@@ -63,13 +71,13 @@ tnt-tossable: true
 # Tossable height gain
 # This is how heigh a tossed item will be tossed
 # Default: 3
-tnt-tossable-height: 3
+tnt-tossable-height: 6
 
 # Tossable Force
 # This the power behind a throw
-# Max force 1.0 - 5.0
+# Max force 0 - 5.0
 # Default: 1.5
-tnt-tossable-force: 0.5
+tnt-tossable-force: 1.0
 
 # Tossable Cooldwon in Seconds
 tnt-tossable-cooldown: 5
@@ -90,6 +98,12 @@ tnt-cluster-effect-type: CLUSTER_DROP
 # How many TNT spawn from cluster effect
 # Default: 3
 tnt-cluster-effect-amount: 3
+
+# TNT Cluster Height Offset
+# Effects how far cluster drops fire from the
+# source of the explosion.
+# Default: 10.0
+tnt-cluster-effect-height-offset: 10.0
 
 # Allow fires to randomly spawn from TNT
 # Default: true
