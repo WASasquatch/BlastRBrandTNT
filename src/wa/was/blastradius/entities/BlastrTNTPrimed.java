@@ -54,7 +54,6 @@ public class BlastrTNTPrimed extends EntityTNTPrimed {
 		this.x = d0; this.y = d1; this.z = d2;
 		this.world = world;
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
-		System.out.print("Created BlastrTNTPrimed! You did it man!");
 	}
 
 	@Override
@@ -63,7 +62,6 @@ public class BlastrTNTPrimed extends EntityTNTPrimed {
 		Location loc = new Location(world.getWorld(), x, y, z);
 		if ( TNTManager.containsRelativeLocation(loc) ) {
 			String type = TNTManager.getType(loc);
-			System.out.print("Added NBT Tag to Entity!");
 			nbttagcompound.set("tntType", new NBTTagString(type));
 		}
 	}

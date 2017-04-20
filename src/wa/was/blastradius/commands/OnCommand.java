@@ -94,6 +94,11 @@ public class OnCommand implements CommandExecutor {
 						if ( TNTEffects.hasEffect(type) ) {
 							
 							Map<String, Object> effect = TNTEffects.getEffect(type);
+							
+							if ( ! ( (boolean) effect.get("tntReceivable") ) ) {
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+								return true;
+							}
 						
 							int amount = 1;
 							
@@ -185,6 +190,11 @@ public class OnCommand implements CommandExecutor {
 							
 							Map<String, Object> effect = TNTEffects.getEffect(type);
 							
+							if ( ! ( (boolean) effect.get("tntReceivable") ) ) {
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+								return true;
+							}
+							
 							if ( ! ( hasEnoughOfType(player, (String) effect.get("displayName"), amount) ) ) {
 								
 								double worth = ((double) effect.get("vaultWorth") * amount );
@@ -251,6 +261,11 @@ public class OnCommand implements CommandExecutor {
 						if ( TNTEffects.hasEffect(type) ) {
 							
 							Map<String, Object> effect = TNTEffects.getEffect(type);
+							
+							if ( ! ( (boolean) effect.get("tntReceivable") ) ) {
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+								return true;
+							}
 						
 							int amount = 1;
 							

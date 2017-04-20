@@ -83,18 +83,20 @@ public class TNTPrimeEvent implements Listener {
     		
 			
 			if ( (boolean) effect.get("doCluster") ) {
+				
 				TNTEffects.tossClusterTNT(type, 
 											location, 
 											(int) effect.get("blastRadius"), 
 											(int) effect.get("clusterAmount"), 
 											(boolean) effect.get("ellipsis"));
+				
 			}
 			
 			return;
 			
 		}
 			    
-	    if ( TNTManager.containsRelativeLocation(location) ) {
+	    if ( ! ( e.getEntity().hasMetadata("tntType") ) && TNTManager.containsRelativeLocation(location) ) {
 	    	
 	    	type = TNTManager.getRelativeType(location);
 	    	
