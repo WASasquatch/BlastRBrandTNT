@@ -15,7 +15,7 @@ import wa.was.blastradius.events.TNTExplosionEvent;
 import wa.was.blastradius.events.InteractionEvent;
 import wa.was.blastradius.events.TNTPrimeEvent;
 import wa.was.blastradius.events.TNTProjectileImpactEvent;
-//import wa.was.blastradius.events.TNTRedstoneEvent;
+import wa.was.blastradius.events.TNTRedstoneEvent;
 import wa.was.blastradius.events.BlockPlacedEvent;
 import wa.was.blastradius.events.BlockRemovedEvent;
 import wa.was.blastradius.events.TNTDispenseEvent;
@@ -103,7 +103,7 @@ public class BlastRadius extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new BlockRemovedEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTProjectileImpactEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTDispenseEvent(), this);
-		// getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this); // Terrible Logic... relying on location manager
+		getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this); // Terrible Logic... relying on location manager
 		getServer().getPluginManager().registerEvents(new AnvilNameEvent(), this);
 		
 		getCommand("blastr").setExecutor(new OnCommand(this));

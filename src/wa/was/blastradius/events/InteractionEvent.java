@@ -1,5 +1,6 @@
 package wa.was.blastradius.events;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,45 @@ public class InteractionEvent implements Listener {
 										(float) effect.get("fuseEffectPitch"),
 										(float) effect.get("fuseEffectPitch"));
 			TNTManager.removeTNT(location);
+			
+		} else if ( e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ) {
+			
+			List<Material> ignitionTypes = new ArrayList<Material>(){
+				private static final long serialVersionUID = 1304111693270154131L; {
+				add(Material.REDSTONE_BLOCK);
+				add(Material.REDSTONE_TORCH_ON);
+			}};
+			
+			if ( e.getClickedBlock() != null 
+					&& ignitionTypes.contains(e.getClickedBlock().getType()) 
+						&& e.getItem() != null && e.getItem().hasItemMeta() ) {
+				
+				ItemMeta meta = e.getItem().getItemMeta();
+				
+				if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
+			
+					Location location = e.getClickedBlock().getRelative(e.getBlockFace(), 1).getLocation();
+					String type = TNTManager.getRelativeType(location);
+							
+					Map<String, Object> effect = TNTEffects.getEffect(type);
+							
+					TNTEffects.createPrimedTNT(effect, 
+												location, 
+												(float) effect.get("yieldMultiplier"), 
+												(int) effect.get("fuseTicks"),
+												(Sound) effect.get("fuseEffect"), 
+												(float) effect.get("fuseEffectPitch"),
+												(float) effect.get("fuseEffectPitch"));
+					
+					if ( ! ( e.getPlayer().getGameMode().equals(GameMode.CREATIVE) ) ) {
+						removeMainHand(e.getPlayer());
+					}
+					e.setCancelled(true);
+					return;
+				
+				}
+			
+			}
 			
 		}
 		
@@ -206,6 +246,7 @@ public class InteractionEvent implements Listener {
 			item = null;
 		}
 		player.getInventory().setItemInMainHand(item);
+		player.updateInventory();
 	}
 
 }
