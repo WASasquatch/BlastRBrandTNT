@@ -346,10 +346,10 @@ public class TNTEffectsManager {
 			effectInfo.put("ellipsis", effect.getBoolean("elliptical-radius", true));
 			
 			if ( Double.compare(effect.getDouble("blast-yield-multiplier", 1), 20.0) < 0 ) {
-				effectInfo.put("yieldMultiplier", (float) effect.getDouble("blast-yield-multiplier", 1));
+				effectInfo.put("yieldMultiplier", (float) effect.getDouble("blast-yield-multiplier", 1.0));
 			} else {
 				Bukkit.getServer().getLogger().warning("Blast Multiplier out of Range: "+effect.get("blast-yield-multiplier")+" for TNT Effect: "+effectName+". Defaulting...");
-				effectInfo.put("yieldMultiplier", (double)1);
+				effectInfo.put("yieldMultiplier", (double)1.0);
 			}
 			
 			if ( effect.getInt("blast-radius", 10) <= 50 ) {
