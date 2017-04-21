@@ -160,6 +160,16 @@ public class TNTExplosionEvent implements Listener {
 				return;
 			}
 			
+			List<Block> toRemove = new ArrayList<Block>();
+			for ( Block block : e.blockList() ) {
+				if ( ((List<Material>)effect.get("protectedMaterials")).contains(block.getType()) ) {
+					toRemove.add(block);
+				}
+			}
+			if ( toRemove.size() > 0 ) {
+				e.blockList().removeAll(toRemove);
+			}
+			
 			blastManager.createBlastRadius(location, 
 											(List<Material>) effect.get("innerMaterials"), 
 											(List<Material>) effect.get("outerMaterials"), 
