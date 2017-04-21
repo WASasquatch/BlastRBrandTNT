@@ -12,9 +12,11 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
@@ -26,6 +28,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
@@ -628,6 +631,19 @@ public class TNTEffectsManager {
 			return effects.get(effect);
 		}
 		return null;
+	}
+	
+	public Set<Entity> getEntitiesInChunks(Location location, int chunkRadius) {
+	    Block b = location.getBlock();
+	    Set<Entity> entities = new HashSet<Entity>();
+	    for (int x = -16 * chunkRadius; x <= 16 * chunkRadius; x += 16) {
+	        for (int z = -16 * chunkRadius; z <= 16 * chunkRadius; z += 16) {
+	            for (Entity e : b.getRelative(x, 0, z).getChunk().getEntities()) {
+	                entities.add(e);
+	            }
+	        }
+	    }
+	    return entities;
 	}
 	
 	@SuppressWarnings("unchecked")

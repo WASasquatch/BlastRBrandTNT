@@ -2,10 +2,8 @@ package wa.was.blastradius.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -142,8 +140,8 @@ public class InteractionEvent implements Listener {
 				        new BukkitRunnable() {
 				            @Override
 				            public void run() {
-				                if( iloc != null && getEntitiesInChunks(iloc, 1).size() > 0 ) {
-				                	for ( Entity entity : getEntitiesInChunks(iloc, 1) ) {
+				                if( iloc != null && TNTEffects.getEntitiesInChunks(iloc, 1).size() > 0 ) {
+				                	for ( Entity entity : TNTEffects.getEntitiesInChunks(iloc, 1) ) {
 				                		if ( entity instanceof TNTPrimed ) {
 				                			if ( ! ( ((TNTPrimed)entity).hasMetadata("tntType") ) 
 				                					&& entity.getLocation().distanceSquared(iloc) < 1 ) {
@@ -276,19 +274,6 @@ public class InteractionEvent implements Listener {
 		}
 		player.getInventory().setItemInMainHand(item);
 		player.updateInventory();
-	}
-	
-	public static Set<Entity> getEntitiesInChunks(Location location, int chunkRadius) {
-	    Block b = location.getBlock();
-	    Set<Entity> entities = new HashSet<Entity>();
-	    for (int x = -16 * chunkRadius; x <= 16 * chunkRadius; x += 16) {
-	        for (int z = -16 * chunkRadius; z <= 16 * chunkRadius; z += 16) {
-	            for (Entity e : b.getRelative(x, 0, z).getChunk().getEntities()) {
-	                entities.add(e);
-	            }
-	        }
-	    }
-	    return entities;
 	}
 
 }
