@@ -261,6 +261,14 @@ protected-materials:
  - GOLD_BLOCK
  - DIAMOND_BLOCK
  - OBSIDIAN
+ - DISPENSER
+ - DROPPPER
+ - OBSERVER
+ - REDSTONE
+ - REDSTONE_WIRE
+ - LEVER
+ - STONE_BUTTON
+ - IRON_BUTTON 
  
 # Obliterate Outer Materials
 # These materials will be set to AIR
