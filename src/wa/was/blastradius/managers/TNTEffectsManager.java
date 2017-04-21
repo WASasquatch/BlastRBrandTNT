@@ -166,10 +166,12 @@ public class TNTEffectsManager {
     
     // End code snippet from SethBling
 	
-	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, Vector velocity) {
-		Location center = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getZ());
+	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, Vector velocity, boolean doSound) {
+		Location center = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		TNTPrimed tnt = location.getWorld().spawn(center, TNTPrimed.class);
-		location.getWorld().playSound(location, sound, volume, pitch);
+		if ( doSound ) {
+			location.getWorld().playSound(location, sound, volume, pitch);
+		}
 		String type = (String) effect.get("type");
 		if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
 			Bukkit.getLogger().info("Creating TNTPrimed Entity at: "+location.getX()+", "+location.getY()+", "+location.getZ()+" Initial Yield: "+tnt.getYield()+" Initial FuseTicks: "+tnt.getFuseTicks()+" Effect: "+type);
@@ -186,8 +188,12 @@ public class TNTEffectsManager {
 		return tnt;
 	}
 	
+	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, boolean doSound) {
+		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null, doSound);
+	}
+	
 	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch) {
-		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null);
+		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null, true);
 	}
 	
 	public String displayNameToType(String name) {
@@ -345,11 +351,11 @@ public class TNTEffectsManager {
 			effectInfo.put("obliterate", effect.getBoolean("obliterate-obliterables", false));
 			effectInfo.put("ellipsis", effect.getBoolean("elliptical-radius", true));
 			
-			if ( Double.compare(effect.getDouble("blast-yield-multiplier", 1), 20.0) < 0 ) {
-				effectInfo.put("yieldMultiplier", (float) effect.getDouble("blast-yield-multiplier", 1.0));
+			if ( Double.compare(effect.getDouble("blast-yield-multiplier", 1F), 20.0) < 0 ) {
+				effectInfo.put("yieldMultiplier", (float) effect.getDouble("blast-yield-multiplier", 1F));
 			} else {
 				Bukkit.getServer().getLogger().warning("Blast Multiplier out of Range: "+effect.get("blast-yield-multiplier")+" for TNT Effect: "+effectName+". Defaulting...");
-				effectInfo.put("yieldMultiplier", (double)1.0);
+				effectInfo.put("yieldMultiplier", (float) 1F);
 			}
 			
 			if ( effect.getInt("blast-radius", 10) <= 50 ) {
@@ -685,7 +691,8 @@ public class TNTEffectsManager {
 										(Sound) effect.get("fuseEffect"), 
 										(float) effect.get("fuseEffectVolume"),
 										(float) effect.get("fuseEffectPitch"),
-										tossed);
+										tossed,
+										true);
 	    tnt.setVelocity(tnt.getVelocity().add(d).multiply((double) effect.get("tossForce")));
 	    return tnt;
 	    
@@ -723,7 +730,8 @@ public class TNTEffectsManager {
 						(Sound) effect.get("fuseEffect"), 
 						(float) effect.get("fuseEffectVolume"),
 						(float) effect.get("fuseEffectPitch"),
-						velocity);
+						velocity,
+						true);
 	}
 
 }

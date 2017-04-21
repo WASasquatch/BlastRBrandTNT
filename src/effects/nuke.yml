@@ -155,7 +155,7 @@ elliptical-radius: true
 # Default: 1 (Normal Explosion)
 # Value of 0 would be no vanilla blocks removed outside 
 # material lists
-blast-yield-multiplier: 6
+blast-yield-multiplier: 6.0
 
 # Blast Radius in Blocks
 # Larger the radius, the more of a impact it 

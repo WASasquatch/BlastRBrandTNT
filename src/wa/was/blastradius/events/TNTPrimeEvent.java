@@ -117,8 +117,8 @@ public class TNTPrimeEvent implements Listener {
 	    		
 	    		// Calculate new ticks
 	    		int ticks = ( ( effect.get("fuseTicks") != null ) ? 
-	    					( ( (int) effect.get("fuseTicks") > 40 ) ? 
-	    					(int) effect.get("fuseTicks") - 40 : 1 ) : 1 );
+	    					( ( (int) effect.get("fuseTicks") > tnt.getFuseTicks() ) ? 
+	    					(int) effect.get("fuseTicks") - tnt.getFuseTicks() : 0 ) : 0 );
 	    		
 		    	TNTPrimed blastRTNT = TNTEffects.createPrimedTNT(effect, 
 		    													location, 
@@ -126,7 +126,8 @@ public class TNTPrimeEvent implements Listener {
 		    													ticks, 
 		    													(Sound) effect.get("fuseEffect"), 
 		    													(float) effect.get("fuseEffectVolume"),
-		    													(float) effect.get("fuseEffectPitch"));
+		    													(float) effect.get("fuseEffectPitch"),
+		    													false);
 		    	blastRTNT.setVelocity(new Vector(0, 0, 0));
 		    	
 				if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {

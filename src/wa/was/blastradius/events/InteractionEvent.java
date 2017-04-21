@@ -115,20 +115,24 @@ public class InteractionEvent implements Listener {
 					String type = TNTManager.getRelativeType(location);
 							
 					Map<String, Object> effect = TNTEffects.getEffect(type);
-							
-					TNTEffects.createPrimedTNT(effect, 
-												location, 
-												(float) effect.get("yieldMultiplier"), 
-												(int) effect.get("fuseTicks"),
-												(Sound) effect.get("fuseEffect"), 
-												(float) effect.get("fuseEffectPitch"),
-												(float) effect.get("fuseEffectPitch"));
 					
-					if ( ! ( e.getPlayer().getGameMode().equals(GameMode.CREATIVE) ) ) {
-						removeMainHand(e.getPlayer());
+					if ( effect != null ) {
+							
+						TNTEffects.createPrimedTNT(effect, 
+													location, 
+													(float) effect.get("yieldMultiplier"), 
+													(int) effect.get("fuseTicks"),
+													(Sound) effect.get("fuseEffect"), 
+													(float) effect.get("fuseEffectPitch"),
+													(float) effect.get("fuseEffectPitch"));
+						
+						if ( ! ( e.getPlayer().getGameMode().equals(GameMode.CREATIVE) ) ) {
+							removeMainHand(e.getPlayer());
+						}
+						e.setCancelled(true);
+						return;
+					
 					}
-					e.setCancelled(true);
-					return;
 				
 				}
 			

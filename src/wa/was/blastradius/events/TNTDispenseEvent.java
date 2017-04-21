@@ -83,7 +83,8 @@ public class TNTDispenseEvent implements Listener {
 						(Sound) effect.get("fuseEffect"), 
 						(float) effect.get("fuseEffectPitch"),
 						(float) effect.get("fuseEffectPitch"),
-						direction.normalize().multiply(0.1));
+						direction.normalize().multiply(0.1),
+						true);
 				
 			}
 			
