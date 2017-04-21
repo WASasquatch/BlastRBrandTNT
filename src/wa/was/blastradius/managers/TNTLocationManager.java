@@ -146,6 +146,7 @@ public class TNTLocationManager {
 	
 	public List<Location> getPlayerLocationsByType(UUID uuid, String type) {
 		List<Location> locs = new ArrayList<Location>();
+		if ( type == null ) return locs;
 		if ( placedTNT.containsKey(uuid) ) {
 			for ( Map.Entry<Location, String> entry : placedTNT.get(uuid).entrySet() ) {
 				if ( entry.getValue().equals(type) ) {

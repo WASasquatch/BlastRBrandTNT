@@ -104,8 +104,9 @@ tnt-cluster-effect-amount: 3
 # TNT Cluster Height Offset
 # Effects how far cluster drops fire from the
 # source of the explosion.
-# Default: 10.0
-tnt-cluster-effect-height-offset: 10.0
+# Range 0.2 - 1.0 (For good effect)
+# Default: 0.65
+tnt-cluster-effect-height-offset: 0.65
 
 # TNT Remote Detonation
 # Default: false

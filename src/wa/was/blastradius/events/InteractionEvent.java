@@ -2,8 +2,10 @@ package wa.was.blastradius.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -13,7 +15,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,6 +26,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import wa.was.blastradius.BlastRadius;
 import wa.was.blastradius.managers.TNTEffectsManager;
@@ -60,6 +65,8 @@ public class InteractionEvent implements Listener {
 	
 	private Map<UUID, Long> cooldowns;
 	
+	private static Location iloc;
+	
 	public InteractionEvent(JavaPlugin plugin) {
 		this.plugin = plugin;
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
@@ -69,6 +76,12 @@ public class InteractionEvent implements Listener {
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onTNTInteract(PlayerInteractEvent e) {
+		
+		List<Material> ignitionTypes = new ArrayList<Material>(){
+			private static final long serialVersionUID = 1304111693270154131L; {
+			add(Material.REDSTONE_BLOCK);
+			add(Material.REDSTONE_TORCH_ON);
+		}};
 		
 		Player player = (Player) e.getPlayer();
 		ItemStack item = player.getInventory().getItemInMainHand();
@@ -95,24 +108,18 @@ public class InteractionEvent implements Listener {
 										(float) effect.get("fuseEffectPitch"));
 			TNTManager.removeTNT(location);
 			
-		} else if ( e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ) {
+		} else if ( e.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
+					&& e.getClickedBlock() != null 
+						&& ignitionTypes.contains(e.getClickedBlock().getType()) ) {
 			
-			List<Material> ignitionTypes = new ArrayList<Material>(){
-				private static final long serialVersionUID = 1304111693270154131L; {
-				add(Material.REDSTONE_BLOCK);
-				add(Material.REDSTONE_TORCH_ON);
-			}};
-			
-			if ( e.getClickedBlock() != null 
-					&& ignitionTypes.contains(e.getClickedBlock().getType()) 
-						&& e.getItem() != null && e.getItem().hasItemMeta() ) {
+			if ( e.getItem() != null && e.getItem().hasItemMeta() ) {
 				
 				ItemMeta meta = e.getItem().getItemMeta();
 				
 				if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
 			
 					Location location = e.getClickedBlock().getRelative(e.getBlockFace(), 1).getLocation();
-					String type = TNTManager.getRelativeType(location);
+					String type = TNTEffects.displayNameToType(meta.getDisplayName());
 							
 					Map<String, Object> effect = TNTEffects.getEffect(type);
 					
@@ -129,6 +136,26 @@ public class InteractionEvent implements Listener {
 						if ( ! ( e.getPlayer().getGameMode().equals(GameMode.CREATIVE) ) ) {
 							removeMainHand(e.getPlayer());
 						}
+						
+						iloc = location;
+						
+				        new BukkitRunnable() {
+				            @Override
+				            public void run() {
+				                if( iloc != null && getEntitiesInChunks(iloc, 1).size() > 0 ) {
+				                	for ( Entity entity : getEntitiesInChunks(iloc, 1) ) {
+				                		if ( entity instanceof TNTPrimed ) {
+				                			if ( ! ( ((TNTPrimed)entity).hasMetadata("tntType") ) 
+				                					&& entity.getLocation().distanceSquared(iloc) < 1 ) {
+				                				entity.remove();
+				                			}
+				                		}
+				                	}
+				                	iloc = null;
+				                }
+				            }
+				        }.runTaskLater(BlastRadius.getBlastRadiusPluginInstance(), 1);
+						
 						e.setCancelled(true);
 						return;
 					
@@ -138,16 +165,14 @@ public class InteractionEvent implements Listener {
 			
 			}
 			
-		}
-		
-		if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) 
+		} else if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) 
 				|| e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ) {
 			
 			if ( item != null && item.hasItemMeta() ) {
 				
 				ItemMeta meta = item.getItemMeta();
 					
-				if ( TNTEffects.isRemoteDetonator(item) ) {
+				if ( TNTEffects.isRemoteDetonator(item) && meta.getDisplayName() != null ) {
 						
 					String type = TNTEffects.remoteDetonatorsType(meta.getDisplayName());
 						
@@ -183,7 +208,7 @@ public class InteractionEvent implements Listener {
 							   								(Sound) effect.get("fuseEffect"), 
 							   								(float) effect.get("fuseEffectVolume"),
 							   								(float) effect.get("fuseEffectPitch"));
-									
+							   	
 							}
 						}
 						
@@ -194,15 +219,15 @@ public class InteractionEvent implements Listener {
 					
 				} else if ( TNTEffects.hasDisplayName(meta.getDisplayName()) ) {
 					
-					if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
-						e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.no-permission")));
-						return;
-					}
-					
 					String type = TNTEffects.displayNameToType(meta.getDisplayName());
 					Map<String, Object> effect = TNTEffects.getEffect(type);
 					
 					if ( effect != null && (boolean) effect.get("tntTossable") ) {
+						
+						if ( ! ( e.getPlayer().hasPermission("blastradius.toss") ) ) {
+							e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.no-permission")));
+							return;
+						}
 						
 						if ( cooldowns.containsKey(e.getPlayer().getUniqueId()) ) {
 							
@@ -251,6 +276,19 @@ public class InteractionEvent implements Listener {
 		}
 		player.getInventory().setItemInMainHand(item);
 		player.updateInventory();
+	}
+	
+	public static Set<Entity> getEntitiesInChunks(Location location, int chunkRadius) {
+	    Block b = location.getBlock();
+	    Set<Entity> entities = new HashSet<Entity>();
+	    for (int x = -16 * chunkRadius; x <= 16 * chunkRadius; x += 16) {
+	        for (int z = -16 * chunkRadius; z <= 16 * chunkRadius; z += 16) {
+	            for (Entity e : b.getRelative(x, 0, z).getChunk().getEntities()) {
+	                entities.add(e);
+	            }
+	        }
+	    }
+	    return entities;
 	}
 
 }

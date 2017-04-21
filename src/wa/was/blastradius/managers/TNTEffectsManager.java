@@ -258,7 +258,7 @@ public class TNTEffectsManager {
 			String detonatorName = effect.getString("display-name", "TNT") +" "+ effect.getString("remote-detonator-tag", "&6Detonator");
 			effectInfo.put("remoteDetonatorName", ChatColor.translateAlternateColorCodes('&', detonatorName));
 			
-			remoteDetonators.put((String) effectInfo.get("remoteDetonatorName"), effectName);
+			remoteDetonators.put(ChatColor.translateAlternateColorCodes('&', detonatorName), effectName);
 			
 			if ( Sound.valueOf(effect.getString("detonator-effect", "BLOCK_NOTE_PLING")) != null ) {
 				effectInfo.put("detonatorEffect", Sound.valueOf(effect.getString("detonator-effect", "BLOCK_NOTE_PLING")));
@@ -615,7 +615,7 @@ public class TNTEffectsManager {
 		}
 		StringBuilder catEnd = new StringBuilder();
 		catEnd.append("&6|");
-		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length()+13; i++ ) {
+		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length()+15; i++ ) {
 			catEnd.append("-");
 		}
 		catEnd.append("|");
