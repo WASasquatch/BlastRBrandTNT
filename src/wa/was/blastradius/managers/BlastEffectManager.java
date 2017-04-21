@@ -31,13 +31,13 @@ public class BlastEffectManager {
 		TNTEffects = plugin.getTNTEffectsManager();
 	}
 	
-	public void createBlastRadius(Location center, List<Material> imats, List<Material> omats, List<Material> pmats, List<Material> obmats, boolean obliterate, boolean fires, boolean smoke, int sc, double so, int radius, int fradius, boolean ellipsis) {
+	public void createBlastRadius(Location center, List<Material> imats, List<Material> omats, List<Material> pmats, List<Location> ploc, List<Material> obmats, boolean obliterate, boolean fires, boolean smoke, int sc, double so, int radius, int fradius, boolean ellipsis) {
 		try {
 			
-			obliterate(center, obmats, obliterate, pmats, radius, ellipsis);
-			render(center, omats, pmats, radius, true, ellipsis);
-			render(center, omats, pmats, (int)(radius/1.25), false, ellipsis);
-			render(center, imats, pmats, (int)(radius/1.75), false, ellipsis);
+			obliterate(center, obmats, obliterate, pmats, ploc, radius, ellipsis);
+			render(center, omats, pmats, ploc, radius, true, ellipsis);
+			render(center, omats, pmats, ploc, (int)(radius/1.25), false, ellipsis);
+			render(center, imats, pmats, ploc, (int)(radius/1.75), false, ellipsis);
 			if ( fires ) {
 				fires(center, pmats, fradius, ellipsis);
 			}
@@ -130,7 +130,7 @@ public class BlastEffectManager {
         }
 	}
 	
-	public void obliterate(Location center, List<Material> obmats, boolean obliterate, List<Material> pmats, int radius, boolean ellipsis) {
+	public void obliterate(Location center, List<Material> obmats, boolean obliterate, List<Material> pmats, List<Location> ploc, int radius, boolean ellipsis) {
         int cX = center.getBlockX();
         int cY = center.getBlockY();
         int cZ = center.getBlockZ();
@@ -147,7 +147,8 @@ public class BlastEffectManager {
                     	
                     	Block block = center.getWorld().getBlockAt(x, y, z);
                     	
-                    	if ( ! ( block.getType().equals(Material.AIR) ) ) {
+                    	if ( ! ( block.getType().equals(Material.AIR) 
+                    			|| ploc.contains(block.getLocation() ) ) ) {
                     			
                     		if ( obmats.contains(block.getType()) 
                     				&& ! ( pmats.contains(block.getType()) ) ) {
@@ -165,7 +166,7 @@ public class BlastEffectManager {
         }
 	}
 	
-	public void render(Location center, List<Material> mats, List<Material> pmats, int radius, boolean doRandom, boolean ellipsis) {
+	public void render(Location center, List<Material> mats, List<Material> pmats, List<Location> ploc, int radius, boolean doRandom, boolean ellipsis) {
         int cX = center.getBlockX();
         int cY = center.getBlockY();
         int cZ = center.getBlockZ();
@@ -184,7 +185,8 @@ public class BlastEffectManager {
                     	int mc = mats.size()-1;
                     	int threshold = 10;
                     	
-                    	if ( ! ( block.getType().equals(Material.AIR) ) ) {
+                    	if ( ! ( block.getType().equals(Material.AIR) ) 
+                    			|| ploc.contains(block.getLocation() ) ) {
                     		if ( ! ( pmats.contains(block.getType())) ) {
                     			
                     			if ( doRandom ) {

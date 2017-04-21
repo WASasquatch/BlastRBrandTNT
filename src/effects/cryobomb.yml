@@ -5,31 +5,32 @@
 
 # Effect name
 # This MUST be the same as the filename, in uppercase
-effect-name: C4
+effect-name: CRYOBOMB
 
 # Items Display Name
 # Default: TNT
-display-name: '&6C&c4 &7Explosives'
+display-name: '&bCryo&6bomb'
 
 # Items Lore
 # Default: null
 lore:
- - '&7Remote detonation explosives&r'
+ - '&7A sophisticated &bCryogenic&r'
+ - '&6Explosive &7device.'
 
 # Vault Cost
 # Default: 10.00
-cost: 120.00
+cost: 200.00
 
 # Vault Worth
 # Default: 0.1
-worth: 90.00
+worth: 105.50
 
 # Can Buy/Give
 tnt-receivable: true
 
 # Fuse Ticks
 # Default: 80
-fuse-ticks: 20
+fuse-ticks: 100
 
 # Fuse Sound
 # Default: ENTITY_TNT_PRIMED 
@@ -43,7 +44,7 @@ fuse-effect-pitch: 2.0
 # Fuse Sound Volume
 # Range 0 - 12.0
 # Default: (float) 1
-fuse-effect-volume: 3.0
+fuse-effect-volume: 3
 
 # Explosion Volume (Not Implemented)
 # See: https://bukkit.org/threads/playsound-parameters-volume-and-pitch.151517/
@@ -54,7 +55,7 @@ sound-explosion-volume: 3
 # If a TNT is Tmper Proof anyone that is NOT the 
 # placer will ignite it upon attempting to remove
 # Default: false
-tamper-proof: false
+tamper-proof: true
 
 # TNT Water Damage
 # TNT isn't a dud in water
@@ -92,7 +93,7 @@ tnt-cluster-effect: false
 # Default: DEFAULT
 # Remember to change this to an existing
 # Type if you remove/change default.yml
-tnt-cluster-effect-type: DEFAULT
+tnt-cluster-effect-type: CLUSTER_DROP
 
 # TNT Cluster Effect Amount
 # How many TNT spawn from cluster effect
@@ -107,11 +108,7 @@ tnt-cluster-effect-height-offset: 10.0
 
 # TNT Remote Detonation
 # Default: false
-remote-detonation: true
-
-# TNT Remote Detonator Suffix Tag
-# Default: &6Detonator
-remote-detonator-tag: '&6Detonator'
+remote-detonation: false
 
 # Remote Detonator Material
 # Default: STONE_BUTTON
@@ -221,14 +218,14 @@ potion-effects:
 # For doubling chances of type, just add it 
 # twice, or three times... or? 
 inner-blast-materials:
- - AIR
- - GRAVEL
- - COBBLESTONE 
+ - PACKED_ICE
+ - FROSTED_ICE
+ - ICE
  
 # Outer Blast Radius Materials
 outer-blast-materials:
- - GRAVEL
- - DIRT
+ - ICE
+ - SNOW_BLOCK
  
 # Protected Materials
 # These materials will not be touched at all
@@ -272,42 +269,4 @@ protected-materials:
 # obliterate-obliterables is false
 # AIR for NONE
 obliterate-materials:
- - REDSTONE_COMPARATOR
- - REDSTONE_COMPARATOR_OFF
- - REDSTONE_COMPARATOR_ON
- - REDSTONE_LAMP_OFF
- - REDSTONE_LAMP_ON
- - REDSTONE_ORE
- - REDSTONE_TORCH_OFF
- - REDSTONE_TORCH_ON
- - REDSTONE_WIRE
- - YELLOW_FLOWER
- - LONG_GRASS
- - FLOWER_POT
- - DEAD_BUSH
- - PUMPKIN_STEM
- - SAPLING
- - TRAP_DOOR
- - ACACIA_DOOR
- - ACACIA_DOOR_ITEM
- - ACACIA_FENCE
- - ACACIA_FENCE_GATE
- - ACACIA_STAIRS
- - BIRCH_DOOR
- - BIRCH_DOOR_ITEM
- - BIRCH_FENCE
- - BIRCH_FENCE_GATE
- - BIRCH_WOOD_STAIRS
- - BOAT
- - BOAT_ACACIA
- - BOAT_BIRCH
- - BOAT_DARK_OAK
- - BOAT_JUNGLE
- - BOAT_SPRUCE
- - DARK_OAK_DOOR
- - DARK_OAK_DOOR_ITEM
- - DARK_OAK_FENCE
- - DARK_OAK_FENCE_GATE
- - DARK_OAK_STAIRS
- - SIGN
- - SIGN_POST
+ - AIR

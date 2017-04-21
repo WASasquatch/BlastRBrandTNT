@@ -67,6 +67,7 @@ public class OnCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String tag, String[] args) {
 		
 		Player player = null;
+		List<String> catalog;
 		if ( sender instanceof Player ) {
 			player = (Player) sender;
 		}
@@ -74,6 +75,42 @@ public class OnCommand implements CommandExecutor {
 		if ( args.length > 0 && args[0] != null ) {
 	
 			switch(args[0].toLowerCase()) {
+			
+				case "list":
+					
+					if ( ! ( sender instanceof Player ) ) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-console")));
+						return true;
+					}
+					
+					if ( ! ( player.hasPermission("blastradius.catalog") ) ) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-node")));
+						return true;
+					}
+					
+					catalog = TNTEffects.getCatalog();
+					
+					for ( String line : catalog ) {
+						sender.sendMessage(line);
+					}
+						
+				case "catalog":
+					
+					if ( ! ( sender instanceof Player ) ) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-console")));
+						return true;
+					}
+					
+					if ( ! ( player.hasPermission("blastradius.catalog") ) ) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-node")));
+						return true;
+					}
+					
+					catalog = TNTEffects.getCatalog();
+					
+					for ( String line : catalog ) {
+						sender.sendMessage(line);
+					}
 			
 				case "buy":
 					
@@ -86,8 +123,8 @@ public class OnCommand implements CommandExecutor {
 						
 						String type = args[1].toUpperCase();
 						
-						if ( ! ( player.hasPermission("blastradius.buy") ) ) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+						if ( ! ( player.hasPermission("blastradius.buy."+type.toLowerCase()) ) || ! ( player.hasPermission("blastradius.buy.*") ) ) {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-node")));
 							return true;
 						}
 						
@@ -96,7 +133,7 @@ public class OnCommand implements CommandExecutor {
 							Map<String, Object> effect = TNTEffects.getEffect(type);
 							
 							if ( ! ( (boolean) effect.get("tntReceivable") ) ) {
-								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-tnt")));
 								return true;
 							}
 						
@@ -176,8 +213,8 @@ public class OnCommand implements CommandExecutor {
 						
 						String type = args[1].toUpperCase();
 						
-						if ( ! ( player.hasPermission("blastradius.sell") ) ) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+						if ( ! ( player.hasPermission("blastradius.sell."+type.toLowerCase()) ) || ! ( player.hasPermission("blastradius.sell.*") ) ) {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-node")));
 							return true;
 						}
 						
@@ -199,7 +236,7 @@ public class OnCommand implements CommandExecutor {
 							Map<String, Object> effect = TNTEffects.getEffect(type);
 							
 							if ( ! ( (boolean) effect.get("tntReceivable") ) ) {
-								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-tnt")));
 								return true;
 							}
 							
@@ -254,7 +291,7 @@ public class OnCommand implements CommandExecutor {
 						String type = args[2].toUpperCase();
 						
 						if ( player != null && ! ( player.hasPermission("blastradius.give") ) ) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-node")));
 							return true;
 						}
 						
@@ -271,7 +308,7 @@ public class OnCommand implements CommandExecutor {
 							Map<String, Object> effect = TNTEffects.getEffect(type);
 							
 							if ( ! ( (boolean) effect.get("tntReceivable") ) ) {
-								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission")));
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.no-permission-tnt")));
 								return true;
 							}
 						
@@ -386,6 +423,16 @@ public class OnCommand implements CommandExecutor {
 						}
 					}
 					
+					return true;
+					
+				case "version":
+					
+					List<String> list = BlastRadius.getVersion();
+					if ( list.size() > 0 ) {
+						for ( String line : list ) {
+							sender.sendMessage(line);
+						}
+					}
 					return true;
 					
 				default:

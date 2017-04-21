@@ -15,10 +15,16 @@ notify-message: '&6Your Blastr Brand TNT &r{TYPE} &6has detonated at &r{LOCATION
 # Default: &2
 price-format: '&2'
 
+# No default effects
+# Will not generate default effects
+no-default-effects: false
+
 # Additional Local
 local:
   invalid-effect: '&cThe effect &r{TYPE} &cis not valid.'
   no-permission: '&cYou do not have permission.'
+  no-permission-node: '&cYou do not have the correct permissions for this action'
+  no-permission-tnt: '&cThis is not a purchasable/sellable/giveable TNT Type'
   no-console: '&cYou cannot execute this command from console.'
   cleared-locations: '&6All Placed TNT locations have been removed.'
   debug-command: '&6Please check the console for a debug response.'
@@ -35,4 +41,6 @@ local:
   target-not-online: '&cThe player &r{PLAYER} &cis not online or does not exist.'
   toss-cooldown: '&cYou must wait &r{COUNT} seconds &cbefore tossing another &r{TYPE}'
   problem-removing-itmes: '&cThere was a problem removing some items from your inventory!'
+  catalog-empty: '&7Catalog is empty...'
+  catalog-title: '&4BlastR Brand TNT &r- &7Catalog'
   free: '&2FREE&r'

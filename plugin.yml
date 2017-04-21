@@ -2,18 +2,26 @@ name: BlastRadius
 version: 0.1.0
 main: wa.was.blastradius.BlastRadius
 depend: [Vault]
+author: WASasquatch
+website: https://www.spigotmc.org/members/was.46364/
 commands:
   blastr:
     description: Allows general control of WeChat
     aliases: [brad]
-    usage: /blastr <BUY|GIVE|DEBUG> <TYPE|USERNAME|DUMPLOCATIONS> <TYPE|(AMOUNT)> (AMOUNT)
+    usage: /blastr <buy|give|debug> <type|username|dumplocations|clearlocations> <type|(amount)> (amount)
 permissions:
-  blastradius.buy:
-    description: Allow purchasing BlastR Brand TNT
-    default: false
-  blastradius.sell:
-    description: Allow selling of BlastR Brand TNT
-    default: false
+  blastradius.buy.*:
+    description: Allow purchasing all types BlastR Brand TNT
+    default: op
+  blastradius.sell.*:
+    description: Allow selling of all types BlastR Brand TNT
+    default: op
+  blastradius.place.*:
+    description: Allow placing all types of BlastR Brand TNT
+    default: op
+  blastradius.catalog:
+    descriptoin: Allow viewing the BlastR Catalog
+    default: op
   blastradius.toss:
     description: Allow tossing of tossable TNT
     default: op

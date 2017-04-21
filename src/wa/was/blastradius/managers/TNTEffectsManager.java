@@ -2,6 +2,7 @@ package wa.was.blastradius.managers;
 
 import wa.was.blastradius.BlastRadius;
 import wa.was.blastradius.commands.OnCommand;
+import wa.was.blastradius.interfaces.VaultInterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -427,73 +428,83 @@ public class TNTEffectsManager {
 			List<PotionEffect> potionEffects = new ArrayList<PotionEffect>();
 			List<String> messages = new ArrayList<String>();
 			
-			for ( String type : effect.getConfigurationSection("potion-effects").getKeys(false) ) {
-	            if ( effectTypes.containsKey(effect.getString("potion-effects." + type + ".type").toUpperCase()) ) {
-	                if ( effect.getString("potion-effects." + type + ".color") != null &&
-	                    colors.containsKey(effect.getString("potion-effects." + type + ".color")) ) {
-	                    potionEffects.add(
-	                        new PotionEffect(effectTypes.get(effect.getString("potion-effects." + type + ".type").toUpperCase()),
-	                            effect.getInt("potion-effects." + type + ".duration"),
-	                            effect.getInt("potion-effects." + type + ".amplifier"),
-	                            effect.getBoolean("potion-effects." + type + ".ambient"),
-	                            effect.getBoolean("potion-effects." + type + ".particles"),
-	                            colors.get(effect.getString("potion-effects." + type + ".color"))));
-	                } else {
-	                    potionEffects.add(
-	                        new PotionEffect(effectTypes.get(effect.getString("potion-effects." + type + ".type").toUpperCase()),
-	                            effect.getInt("potion-effects." + type + ".duration"),
-	                            effect.getInt("potion-effects." + type + ".amplifier"),
-	                            effect.getBoolean("potion-effects." + type + ".ambient"),
-	                            effect.getBoolean("potion-effects." + type + ".particles")));
-	                }
-	                messages.add(effect.getString("potion-message", "&1You have been &2effected &1with &c{TYPE} &1for &6{TIME} &rseconds")
-	                				.replace("{TYPE}", WordUtils.capitalize(effect.getString("potion-effects." + type + ".type").toLowerCase()))
-	                				.replace("{TIME}", ""+( effect.getInt("potion-effects." + type + ".duration") / 20)));
-	            }
+			if ( effect.getConfigurationSection("potion-effects").getKeys(false).size() > 0 ) {
+				for ( String type : effect.getConfigurationSection("potion-effects").getKeys(false) ) {
+		            if ( effectTypes.containsKey(effect.getString("potion-effects." + type + ".type").toUpperCase()) ) {
+		                if ( effect.getString("potion-effects." + type + ".color") != null &&
+		                    colors.containsKey(effect.getString("potion-effects." + type + ".color")) ) {
+		                    potionEffects.add(
+		                        new PotionEffect(effectTypes.get(effect.getString("potion-effects." + type + ".type").toUpperCase()),
+		                            effect.getInt("potion-effects." + type + ".duration"),
+		                            effect.getInt("potion-effects." + type + ".amplifier"),
+		                            effect.getBoolean("potion-effects." + type + ".ambient"),
+		                            effect.getBoolean("potion-effects." + type + ".particles"),
+		                            colors.get(effect.getString("potion-effects." + type + ".color"))));
+		                } else {
+		                    potionEffects.add(
+		                        new PotionEffect(effectTypes.get(effect.getString("potion-effects." + type + ".type").toUpperCase()),
+		                            effect.getInt("potion-effects." + type + ".duration"),
+		                            effect.getInt("potion-effects." + type + ".amplifier"),
+		                            effect.getBoolean("potion-effects." + type + ".ambient"),
+		                            effect.getBoolean("potion-effects." + type + ".particles")));
+		                }
+		                messages.add(effect.getString("potion-message", "&1You have been &2effected &1with &c{TYPE} &1for &6{TIME} &rseconds")
+		                				.replace("{TYPE}", WordUtils.capitalize(effect.getString("potion-effects." + type + ".type").toLowerCase()))
+		                				.replace("{TIME}", ""+( effect.getInt("potion-effects." + type + ".duration") / 20)));
+		            }
+				}
 			}
 			
 			potionEffectsManager.addMessages(effectName, messages);
 	        potionEffectsManager.addAllEffects(effectName, potionEffects);
 			
 			List<Material> innerMaterials = new ArrayList<Material>();
-			for ( String mat : effect.getStringList("inner-blast-materials") ) {
-				if ( Material.valueOf(mat) != null ) {
-					innerMaterials.add(Material.valueOf(mat));
-				} else {
-					Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Inner Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+			if ( effect.getStringList("inner-blast-materials").size() > 0 ) {
+				for ( String mat : effect.getStringList("inner-blast-materials") ) {
+					if ( Material.valueOf(mat) != null ) {
+						innerMaterials.add(Material.valueOf(mat));
+					} else {
+						Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Inner Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+					}
 				}
 			}
 			
 			effectInfo.put("innerMaterials", innerMaterials);
 			
 			List<Material> outerMaterials = new ArrayList<Material>();
-			for ( String mat : effect.getStringList("outer-blast-materials") ) {
-				if ( Material.valueOf(mat) != null ) {
-					outerMaterials.add(Material.valueOf(mat));
-				} else {
-					Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Outer Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+			if ( effect.getStringList("outer-blast-materials").size() > 0 ) {
+				for ( String mat : effect.getStringList("outer-blast-materials") ) {
+					if ( Material.valueOf(mat) != null ) {
+						outerMaterials.add(Material.valueOf(mat));
+					} else {
+						Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Outer Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+					}
 				}
 			}
 			
 			effectInfo.put("outerMaterials", outerMaterials);
 			
 			List<Material> protectedMaterials = new ArrayList<Material>();
-			for ( String mat : effect.getStringList("protected-materials") ) {
-				if ( Material.valueOf(mat) != null ) {
-					protectedMaterials.add(Material.valueOf(mat));
-				} else {
-					Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Protected Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+			if ( effect.getStringList("protected-materials").size() > 0 ) {
+				for ( String mat : effect.getStringList("protected-materials") ) {
+					if ( Material.valueOf(mat) != null ) {
+						protectedMaterials.add(Material.valueOf(mat));
+					} else {
+						Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Protected Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+					}
 				}
 			}
 			
 			effectInfo.put("protectedMaterials", protectedMaterials);
 			
 			List<Material> obliterateMaterials = new ArrayList<Material>();
-			for ( String mat : effect.getStringList("obliterate-materials") ) {
-				if ( Material.valueOf(mat) != null ) {
-					obliterateMaterials.add(Material.valueOf(mat));
-				} else {
-					Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Obliterate Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+			if ( effect.getStringList("obliterate-materials").size() > 0 ) {
+				for ( String mat : effect.getStringList("obliterate-materials") ) {
+					if ( Material.valueOf(mat) != null ) {
+						obliterateMaterials.add(Material.valueOf(mat));
+					} else {
+						Bukkit.getServer().getLogger().warning("[BlastRadius] Invalid Obliterate Material: "+mat+" for TNT Effect: "+effectName+". Skipping...");
+					}
 				}
 			}
 			
@@ -522,24 +533,28 @@ public class TNTEffectsManager {
 			effectsDir.mkdirs();
 		}
 		
-		if ( ! ( defaultEffect.exists() ) ) {
-			Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/default.yml", false);
-		}
+		if ( ! ( plugin.getConfig().getBoolean("no-default-effects") ) ) {
 		
-		if ( ! ( defaultEffectNuke.exists() ) ) {
-			Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/nuke.yml", false);
-		}
-		
-		if ( ! ( defaultEffectCluster.exists() ) ) {
-			Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster.yml", false);
-		}
-		
-		if ( ! ( defaultEffectClusterDrop.exists() ) ) {
-			Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster_drop.yml", false);
-		}
-		
-		if ( ! ( defaultEffectC4.exists() ) ) {
-			Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/c4.yml", false);
+			if ( ! ( defaultEffect.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/default.yml", false);
+			}
+			
+			if ( ! ( defaultEffectNuke.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/nuke.yml", false);
+			}
+			
+			if ( ! ( defaultEffectCluster.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster.yml", false);
+			}
+			
+			if ( ! ( defaultEffectClusterDrop.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster_drop.yml", false);
+			}
+			
+			if ( ! ( defaultEffectC4.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/c4.yml", false);
+			}
+
 		}
 		
 		try(Stream<Path> paths = Files.walk(Paths.get(effectsPath))) {
@@ -567,6 +582,33 @@ public class TNTEffectsManager {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public List<String> getCatalog() {
+		List<String> catalog = new ArrayList<String>();
+		VaultInterface vault = new VaultInterface();
+		catalog.add(ChatColor.translateAlternateColorCodes('&', "&6|-----------------------{ "+plugin.getConfig().getString("local.catalog-title", "&4BlastR Brand TNT &r- &7Catalog")+"&r &6}-----------------------|"));
+		boolean found = false;
+		if ( displayNames.size() > 0 ) {
+			for ( Map.Entry<String, String> entry : displayNames.entrySet() ) {
+				if ( ! ( hasEffect(entry.getValue()) ) ) continue;
+				found = true;
+				Map<String, Object> effect = getEffect(entry.getValue());
+				String listing = ChatColor.translateAlternateColorCodes('&', "&a"+vault.format((double)effect.get("vaultCost"))+" &6| &r"+entry.getKey()+" &6- &r"+entry.getValue());
+				catalog.add(listing);
+			}
+		}
+		if ( ! found ) {
+			catalog.add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.catalog-empty", "&7Catalog is empty...")));
+		}
+		StringBuilder catEnd = new StringBuilder();
+		catEnd.append("&6|");
+		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length()+13; i++ ) {
+			catEnd.append("-");
+		}
+		catEnd.append("|");
+		catalog.add(ChatColor.translateAlternateColorCodes('&', catEnd.toString()));
+		return catalog;
 	}
 	
 	public Map<String, Object> getEffect(String effect) {

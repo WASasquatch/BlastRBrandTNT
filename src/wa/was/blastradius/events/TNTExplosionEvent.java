@@ -1,5 +1,6 @@
 package wa.was.blastradius.events;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -71,11 +72,14 @@ public class TNTExplosionEvent implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void tntExplosion(EntityExplodeEvent e) {
 		
+		List<Location> blocations = new ArrayList<Location>();
+		
 		for ( Block block : e.blockList() ) {
 			if ( block.getType().equals(Material.TNT) ) {
 				if ( TNTManager.containsRelativeLocation(block.getLocation()) ) {
 					
 					Location location = block.getLocation();
+					blocations.add(location);
 					String type = TNTManager.getRelativeType(location);
 					Map<String, Object> effect = TNTEffects.getEffect(type);
 					
@@ -160,6 +164,7 @@ public class TNTExplosionEvent implements Listener {
 											(List<Material>) effect.get("innerMaterials"), 
 											(List<Material>) effect.get("outerMaterials"), 
 											(List<Material>) effect.get("protectedMaterials"), 
+											blocations,
 											(List<Material>) effect.get("obliterateMaterials"), 
 											(boolean) effect.get("obliterate"), 
 											(boolean) effect.get("doFires"), 

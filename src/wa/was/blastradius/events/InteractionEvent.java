@@ -50,7 +50,7 @@ import wa.was.blastradius.managers.TNTLocationManager;
  *	
  *************************/
 
-public class TNTInteractionEvent implements Listener {
+public class InteractionEvent implements Listener {
 	
 	private JavaPlugin plugin;
 	
@@ -59,7 +59,7 @@ public class TNTInteractionEvent implements Listener {
 	
 	private Map<UUID, Long> cooldowns;
 	
-	public TNTInteractionEvent(JavaPlugin plugin) {
+	public InteractionEvent(JavaPlugin plugin) {
 		this.plugin = plugin;
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
 		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
@@ -69,10 +69,13 @@ public class TNTInteractionEvent implements Listener {
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onTNTInteract(PlayerInteractEvent e) {
 		
+		Player player = (Player) e.getPlayer();
+		ItemStack item = player.getInventory().getItemInMainHand();
+		
 		if ( e.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
 				&& e.getClickedBlock().getType().equals(Material.TNT)
-					&& ( e.getItem() != null && ( e.getItem().getType().equals(Material.FLINT_AND_STEEL)
-							|| e.getItem().getType().equals(Material.FIREBALL) ) )
+					&& ( item != null && ( item.getType().equals(Material.FLINT_AND_STEEL)
+							|| item.getType().equals(Material.FIREBALL) ) )
 						&& TNTManager.containsLocation(e.getClickedBlock().getLocation()) ) {
 			
 			Location location = e.getClickedBlock().getLocation();
@@ -93,13 +96,12 @@ public class TNTInteractionEvent implements Listener {
 			
 		}
 		
-		if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) ) {
+		if ( e.getAction().equals(Action.RIGHT_CLICK_AIR) 
+				|| e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ) {
 			
-			ItemStack item = e.getItem();
-			
-			if ( item.hasItemMeta() ) {
+			if ( item != null && item.hasItemMeta() ) {
 				
-				ItemMeta meta = e.getItem().getItemMeta();
+				ItemMeta meta = item.getItemMeta();
 					
 				if ( TNTEffects.isRemoteDetonator(item) ) {
 						

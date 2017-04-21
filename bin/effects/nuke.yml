@@ -290,6 +290,7 @@ protected-materials:
 # These materials will be set to AIR
 # Subsequently they will break naturally if 
 # obliterate-obliterables is false
+# AIR for NONE
 obliterate-materials:
  - REDSTONE_COMPARATOR
  - REDSTONE_COMPARATOR_OFF

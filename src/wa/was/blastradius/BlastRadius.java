@@ -1,18 +1,24 @@
 package wa.was.blastradius;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import wa.was.blastradius.events.TNTRemovedEvent;
 import wa.was.blastradius.events.TNTSpreadEvent;
 import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.events.AnvilNameEvent;
 import wa.was.blastradius.events.TNTExplosionEvent;
-import wa.was.blastradius.events.TNTInteractionEvent;
+import wa.was.blastradius.events.InteractionEvent;
 import wa.was.blastradius.events.TNTPrimeEvent;
+import wa.was.blastradius.events.TNTProjectileImpactEvent;
 //import wa.was.blastradius.events.TNTRedstoneEvent;
-import wa.was.blastradius.events.TNTPlaceEvent;
+import wa.was.blastradius.events.BlockPlacedEvent;
+import wa.was.blastradius.events.BlockRemovedEvent;
+import wa.was.blastradius.events.TNTDispenseEvent;
 import wa.was.blastradius.managers.BlastEffectManager;
 import wa.was.blastradius.managers.PotionEffectsManager;
 import wa.was.blastradius.managers.TNTEffectsManager;
@@ -90,11 +96,13 @@ public class BlastRadius extends JavaPlugin {
 		TNTManager.loadPlacedTNT();
 
 		getServer().getPluginManager().registerEvents(new TNTExplosionEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTRemovedEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTInteractionEvent(this), this);
+		getServer().getPluginManager().registerEvents(new InteractionEvent(this), this);
 		getServer().getPluginManager().registerEvents(new TNTSpreadEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTPrimeEvent(), this); // Would love to have a actual prime event
-		getServer().getPluginManager().registerEvents(new TNTPlaceEvent(), this);
+		getServer().getPluginManager().registerEvents(new BlockPlacedEvent(), this);
+		getServer().getPluginManager().registerEvents(new BlockRemovedEvent(), this);
+		getServer().getPluginManager().registerEvents(new TNTProjectileImpactEvent(), this);
+		getServer().getPluginManager().registerEvents(new TNTDispenseEvent(), this);
 		// getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this); // Terrible Logic... relying on location manager
 		getServer().getPluginManager().registerEvents(new AnvilNameEvent(), this);
 		
@@ -124,6 +132,14 @@ public class BlastRadius extends JavaPlugin {
 	
 	public BlastEffectManager getBlastManager() {
 		return blastManager;
+	}
+	
+	public static List<String> getVersion() {
+		PluginDescriptionFile desc = BlastRadius.getBlastRadiusPluginInstance().getDescription();
+		List<String> response = new ArrayList<String>();
+		response.add(ChatColor.translateAlternateColorCodes('&', "&6"+desc.getName()+" &r- &3version &r"+desc.getVersion() +" by "+desc.getAuthors()));
+		response.add("&6Website: &4"+desc.getWebsite());
+		return response;
 	}
 	
     private void createConfig() {

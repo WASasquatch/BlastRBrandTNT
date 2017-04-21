@@ -103,7 +103,7 @@ tnt-cluster-effect-amount: 3
 # Effects how far cluster drops fire from the
 # source of the explosion.
 # Default: 10.0
-tnt-cluster-effect-height-offset: 10.0
+tnt-cluster-effect-height-offset: 12.50
 
 # TNT Remote Detonation
 # Default: false
@@ -266,6 +266,7 @@ protected-materials:
 # These materials will be set to AIR
 # Subsequently they will break naturally if 
 # obliterate-obliterables is false
+# AIR for NONE
 obliterate-materials:
  - REDSTONE_COMPARATOR
  - REDSTONE_COMPARATOR_OFF
