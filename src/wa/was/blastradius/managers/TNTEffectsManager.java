@@ -167,7 +167,7 @@ public class TNTEffectsManager {
     // End code snippet from SethBling
 	
 	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, Vector velocity, boolean doSound) {
-		Location center = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+		Location center = location.add(0.5,0.5,0.5);
 		TNTPrimed tnt = location.getWorld().spawn(center, TNTPrimed.class);
 		if ( doSound ) {
 			location.getWorld().playSound(location, sound, volume, pitch);

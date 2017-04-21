@@ -85,7 +85,7 @@ public class TNTPrimeEvent implements Listener {
 			if ( (boolean) effect.get("doCluster") ) {
 				
 				TNTEffects.tossClusterTNT(type, 
-											location, 
+											location.getBlock().getLocation(), 
 											(int) effect.get("blastRadius"), 
 											(int) effect.get("clusterAmount"), 
 											(boolean) effect.get("ellipsis"));
@@ -127,6 +127,7 @@ public class TNTPrimeEvent implements Listener {
 		    													(Sound) effect.get("fuseEffect"), 
 		    													(float) effect.get("fuseEffectVolume"),
 		    													(float) effect.get("fuseEffectPitch"),
+		    													tnt.getVelocity(),
 		    													false);
 		    	blastRTNT.setVelocity(new Vector(0, 0, 0));
 		    	
