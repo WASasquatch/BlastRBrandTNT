@@ -528,6 +528,7 @@ public class TNTEffectsManager {
 		File defaultEffectNuke = new File(effectsPath + "nuke.yml");
 		File defaultEffectCluster = new File(effectsPath + "cluster.yml");
 		File defaultEffectClusterDrop = new File(effectsPath + "cluster_drop.yml");
+		File defaultEffectCryobomb = new File(effectsPath + "cryobomb.yml");
 		File defaultEffectC4 = new File(effectsPath + "c4.yml");
 		
 		if ( ! (effectsDir.exists() ) ) {
@@ -554,6 +555,10 @@ public class TNTEffectsManager {
 			
 			if ( ! ( defaultEffectC4.exists() ) ) {
 				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/c4.yml", false);
+			}
+			
+			if ( ! ( defaultEffectCryobomb.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cryobomb.yml", false);
 			}
 
 		}
