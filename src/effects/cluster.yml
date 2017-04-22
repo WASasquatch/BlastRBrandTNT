@@ -15,6 +15,11 @@ display-name: '&6Cluster &cBomb'
 # Default: null
 lore:
  - '&7Launches &r3 additional &ccharges&r'
+  
+# TNT Texture Value
+# This is the short integer value for your texture
+# Default: 1
+tnt-texture-value: 1
 
 # Vault Cost
 # Default: 10.00
@@ -109,6 +114,11 @@ tnt-cluster-effect-height-offset: 0.65
 # TNT Remote Detonation
 # Default: false
 remote-detonation: false
+
+# Detonator Texture Value
+# This is the short integer value for your texture
+# Default: 1
+detonator-texture-value: 1
 
 # Remote Detonator Material
 # Default: STONE_BUTTON

@@ -97,6 +97,7 @@ public class InteractionEvent implements Listener {
 			
 			e.setCancelled(true);
 			e.getClickedBlock().setType(Material.AIR);
+
 			TNTEffects.createPrimedTNT(effect, 
 										location, 
 										(float) effect.get("yieldMultiplier"), 
@@ -122,7 +123,7 @@ public class InteractionEvent implements Listener {
 					Map<String, Object> effect = TNTEffects.getEffect(type);
 					
 					if ( effect != null ) {
-							
+
 						TNTEffects.createPrimedTNT(effect, 
 													location, 
 													(float) effect.get("yieldMultiplier"), 
@@ -198,7 +199,7 @@ public class InteractionEvent implements Listener {
 									
 								Block block = location.getBlock();
 								block.setType(Material.AIR);
-						    		
+
 							   	TNTEffects.createPrimedTNT(effect, 
 							   								location, 
 							   								(float) effect.get("yieldMultiplier"), 

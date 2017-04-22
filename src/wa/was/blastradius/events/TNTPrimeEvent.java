@@ -104,37 +104,39 @@ public class TNTPrimeEvent implements Listener {
 	    		UUID owner = TNTManager.getRelativeOwner(location);
 	    		OfflinePlayer player = Bukkit.getServer().getPlayer(owner);
 	    		
-	    		if ( (int) effect.get("fuseTicks") > 40 ) {
+	    		// Calculate new ticks
+	    		if ( effect.get("fuseTicks") != null 
+	    				&& (int) effect.get("fuseTicks") > 40 ) {
 		    		e.setCancelled(true);
 		    		tnt.remove();
 	    		}
 	    		
+	    		int ticks = ( ( effect.get("fuseTicks") != null ) ? 
+	    					( ( (int) effect.get("fuseTicks") > tnt.getFuseTicks() ) ? 
+	    					(int) effect.get("fuseTicks") - tnt.getFuseTicks() : 0 ) : 0 );
+	    		
+	    		// Do Water Damage
 	    		if ( (boolean) effect.get("doWaterDamage") 
 	    				&& location.getBlock().getType().equals(Material.WATER) ) {
 	    			waterLocations.add(location);
 	    			location.getBlock().setType(Material.AIR);
 	    		}
 	    		
-	    		// Calculate new ticks
-	    		int ticks = ( ( effect.get("fuseTicks") != null ) ? 
-	    					( ( (int) effect.get("fuseTicks") > tnt.getFuseTicks() ) ? 
-	    					(int) effect.get("fuseTicks") - tnt.getFuseTicks() : 0 ) : 0 );
-	    		
-		    	TNTPrimed blastRTNT = TNTEffects.createPrimedTNT(effect, 
-		    													location.getBlock().getLocation(), 
-		    													(float) effect.get("yieldMultiplier"), 
-		    													ticks, 
-		    													(Sound) effect.get("fuseEffect"), 
-		    													(float) effect.get("fuseEffectVolume"),
-		    													(float) effect.get("fuseEffectPitch"),
-		    													false);
-		    	blastRTNT.setVelocity(new Vector(0, 0, 0));
+		    	TNTEffects.createPrimedTNT(effect, 
+		    								location.getBlock().getLocation(), 
+		    								(float) effect.get("yieldMultiplier"), 
+		    								ticks, 
+		    								(Sound) effect.get("fuseEffect"), 
+		    								(float) effect.get("fuseEffectVolume"),
+		    								(float) effect.get("fuseEffectPitch"),
+		    								new Vector(0,0,0),
+		    								false);
 		    	
 				if ( OnCommand.toggleDebug != null && OnCommand.toggleDebug ) {
 					if ( player != null ) {
-						Bukkit.getLogger().info("Created BlastR Brand ("+type.toUpperCase()+") at: "+blastRTNT.getLocation().toString()+" By Player: ("+player.getName()+") "+owner);
+						Bukkit.getLogger().info("Created BlastR Brand ("+type.toUpperCase()+") at: "+location+" By Player: ("+player.getName()+") "+owner);
 					} else {
-						Bukkit.getLogger().info("Created BlastR Brand ("+type.toUpperCase()+") at: "+blastRTNT.getLocation().toString()+" By Player: "+owner);
+						Bukkit.getLogger().info("Created BlastR Brand ("+type.toUpperCase()+") at: "+location+" By Player: "+owner);
 					}
 				}
 		    	

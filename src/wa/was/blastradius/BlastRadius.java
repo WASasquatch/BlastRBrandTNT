@@ -11,12 +11,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import wa.was.blastradius.events.TNTSpreadEvent;
 import wa.was.blastradius.commands.OnCommand;
 import wa.was.blastradius.events.AnvilNameEvent;
-import wa.was.blastradius.events.BlockPhysEvent;
 import wa.was.blastradius.events.TNTExplosionEvent;
 import wa.was.blastradius.events.InteractionEvent;
 import wa.was.blastradius.events.TNTPrimeEvent;
 import wa.was.blastradius.events.TNTProjectileImpactEvent;
-import wa.was.blastradius.events.TNTRedstoneEvent;
+// import wa.was.blastradius.events.TNTRedstoneEvent;
 import wa.was.blastradius.events.BlockPlacedEvent;
 import wa.was.blastradius.events.BlockRemovedEvent;
 import wa.was.blastradius.events.TNTDispenseEvent;
@@ -100,13 +99,12 @@ public class BlastRadius extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new InteractionEvent(this), this);
 		getServer().getPluginManager().registerEvents(new BlockPlacedEvent(), this);
 		getServer().getPluginManager().registerEvents(new BlockRemovedEvent(), this);
-		getServer().getPluginManager().registerEvents(new BlockPhysEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTExplosionEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTSpreadEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTPrimeEvent(), this); // Would love to have a actual prime event
 		getServer().getPluginManager().registerEvents(new TNTProjectileImpactEvent(), this);
 		getServer().getPluginManager().registerEvents(new TNTDispenseEvent(), this);
-		getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this); // Terrible Logic... relying on location manager
+		// getServer().getPluginManager().registerEvents(new TNTRedstoneEvent(), this); // Terrible Logic... relying on location manager
 		
 		getCommand("blastr").setExecutor(new OnCommand(this));
 		

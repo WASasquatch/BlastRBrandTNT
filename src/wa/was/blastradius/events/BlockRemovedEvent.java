@@ -74,7 +74,7 @@ public class BlockRemovedEvent implements Listener {
 				
 			if ( (boolean) effect.get("tamperProof") 
 					&& player instanceof Player 
-						&& ! ( player.equals(uuid) ) ) {
+						&& ! ( player.getUniqueId().equals(uuid) ) ) {
 					
 				block.setType(Material.AIR);
 				TNTManager.removePlayersTNT(uuid, location, type);

@@ -31,6 +31,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -168,6 +169,32 @@ public class TNTEffectsManager {
     }
     
     // End code snippet from SethBling
+    
+    public ItemStack createDetonator(Map<String, Object> effect) {
+    	if ( effect == null ) return null;
+		ItemStack detonator = new ItemStack((Material) effect.get("remoteDetonator"), 1, (short) effect.get("detonatorTexture"));
+		ItemMeta detMeta = detonator.getItemMeta();
+		detMeta.setUnbreakable(true);
+		detMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+		detMeta.setDisplayName((String) effect.get("remoteDetonatorName"));
+		detonator.setItemMeta(detMeta);
+		return detonator;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public ItemStack createTNT(Map<String, Object> effect, int amount) {
+    	if ( effect == null ) return null;
+    	if ( amount <= 0 ) amount = 1;
+    	if ( amount > 64 ) amount = 64;
+		ItemStack tnt = new ItemStack(Material.TNT, amount, (short) effect.get("explosiveTexture"));
+		ItemMeta tntMeta = tnt.getItemMeta();
+        tntMeta.setUnbreakable(true);
+        tntMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+		tntMeta.setDisplayName((String) effect.get("displayName"));
+		tntMeta.setLore((List<String>) effect.get("lore"));
+		tnt.setItemMeta(tntMeta);
+    	return tnt;
+    }
 	
 	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, Vector velocity, boolean doSound) {
 		Location center = location.add(0.5,0.5,0.5);
@@ -248,6 +275,8 @@ public class TNTEffectsManager {
 				effectInfo.put("vaultWorth", 0.1);
 			}
 			
+			effectInfo.put("explosiveTexture", (short) effect.get("tnt-texture-value", 1));
+			effectInfo.put("detonatorTexture", (short) effect.get("detonator-texture-value", 1));
 			effectInfo.put("remoteDetonation", effect.getBoolean("remote-detonation", false));
 			
 			if ( Material.valueOf(effect.getString("remote-detonator-material", "STONE_BUTTON")) != null ) {
