@@ -275,8 +275,15 @@ public class TNTEffectsManager {
 				effectInfo.put("vaultWorth", 0.1);
 			}
 			
-			effectInfo.put("explosiveTexture", (short) effect.get("tnt-texture-value", 1));
-			effectInfo.put("detonatorTexture", (short) effect.get("detonator-texture-value", 1));
+			int tTexture = effect.getInt("tnt-texture-value", 1);
+			int dTexture = effect.getInt("detonator-texture-value", 1);
+			
+			short ntTexture = tTexture > Short.MAX_VALUE ? Short.MAX_VALUE : tTexture < Short.MIN_VALUE ? Short.MIN_VALUE : (short) tTexture;
+			short ndTexture = dTexture > Short.MAX_VALUE ? Short.MAX_VALUE : dTexture < Short.MIN_VALUE ? Short.MIN_VALUE : (short) dTexture;
+			
+			effectInfo.put("explosiveTexture", ntTexture);
+			effectInfo.put("detonatorTexture", ndTexture);
+			
 			effectInfo.put("remoteDetonation", effect.getBoolean("remote-detonation", false));
 			
 			if ( Material.valueOf(effect.getString("remote-detonator-material", "STONE_BUTTON")) != null ) {
@@ -631,7 +638,7 @@ public class TNTEffectsManager {
 	public List<String> getCatalog() {
 		List<String> catalog = new ArrayList<String>();
 		VaultInterface vault = new VaultInterface();
-		catalog.add(ChatColor.translateAlternateColorCodes('&', "&6|-----------------------{ "+plugin.getConfig().getString("local.catalog-title", "&4BlastR Brand TNT &r- &7Catalog")+"&r &6}-----------------------|"));
+		catalog.add(ChatColor.translateAlternateColorCodes('&', "&6|--------------{ "+plugin.getConfig().getString("local.catalog-title", "&4BlastR Brand TNT &r- &7Catalog")+"&r &6}--------------|"));
 		boolean found = false;
 		if ( displayNames.size() > 0 ) {
 			for ( Map.Entry<String, String> entry : displayNames.entrySet() ) {
@@ -647,7 +654,7 @@ public class TNTEffectsManager {
 		}
 		StringBuilder catEnd = new StringBuilder();
 		catEnd.append("&6|");
-		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length()+15; i++ ) {
+		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length(); i++ ) {
 			catEnd.append("-");
 		}
 		catEnd.append("|");

@@ -62,7 +62,6 @@ public class OnCommand implements CommandExecutor {
 		TNTEffects = ((BlastRadius)plugin).getTNTEffectsManager();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String tag, String[] args) {
 		
@@ -158,21 +157,15 @@ public class OnCommand implements CommandExecutor {
 									price = config.getString("price-format", "&2")+vault.format((double)effect.get("vaultCost")*amount);
 								}
 								
-								ItemStack tnt = new ItemStack(Material.TNT, amount);
-								ItemMeta tntMeta = tnt.getItemMeta();
-								tntMeta.setDisplayName((String) effect.get("displayName"));
-								tntMeta.setLore((List<String>) effect.get("lore"));
-								tnt.setItemMeta(tntMeta);
+								ItemStack tnt = TNTEffects.createTNT(effect, amount);
+								player.getInventory().addItem(tnt);
 								
 								if ( (boolean) effect.get("remoteDetonation") ) {
-									ItemStack detonator = new ItemStack((Material) effect.get("remoteDetonator"), 1);
-									ItemMeta detMeta = detonator.getItemMeta();
-									detMeta.setDisplayName((String) effect.get("remoteDetonatorName"));
-									detonator.setItemMeta(detMeta);
-									player.getInventory().addItem(detonator);
+									ItemStack detonator = TNTEffects.createDetonator(effect);
+									if ( detonator != null )
+										player.getInventory().addItem(detonator);
 								}
 								
-								player.getInventory().addItem(tnt);
 								player.updateInventory();
 								
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("local.purchase-success")
@@ -326,21 +319,15 @@ public class OnCommand implements CommandExecutor {
 							}
 							
 								
-							ItemStack tnt = new ItemStack(Material.TNT, amount);
-							ItemMeta tntMeta = tnt.getItemMeta();
-							tntMeta.setDisplayName((String) effect.get("displayName"));
-							tntMeta.setLore((List<String>) effect.get("lore"));
-							tnt.setItemMeta(tntMeta);
+							ItemStack tnt = TNTEffects.createTNT(effect, amount);
+							target.getInventory().addItem(tnt);
 							
 							if ( (boolean) effect.get("remoteDetonation") ) {
-								ItemStack detonator = new ItemStack((Material) effect.get("remoteDetonator"), 1);
-								ItemMeta detMeta = detonator.getItemMeta();
-								detMeta.setDisplayName((String) effect.get("remoteDetonatorName"));
-								detonator.setItemMeta(detMeta);
-								player.getInventory().addItem(detonator);
+								ItemStack detonator = TNTEffects.createDetonator(effect);
+								if ( detonator != null )
+									target.getInventory().addItem(detonator);
 							}
-								
-							target.getInventory().addItem(tnt);
+							
 							target.updateInventory();
 							
 							if ( sender instanceof Player ) {

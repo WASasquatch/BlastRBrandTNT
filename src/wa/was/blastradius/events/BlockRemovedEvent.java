@@ -1,6 +1,5 @@
 package wa.was.blastradius.events;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import wa.was.blastradius.BlastRadius;
 import wa.was.blastradius.commands.OnCommand;
@@ -55,8 +53,7 @@ public class BlockRemovedEvent implements Listener {
 		TNTManager = BlastRadius.getBlastRadiusInstance().getTNTLocationManager();
 		TNTEffects = BlastRadius.getBlastRadiusInstance().getTNTEffectsManager();
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onBlockRemove(BlockBreakEvent e) {
 		if ( e.isCancelled() ) return;
@@ -92,11 +89,7 @@ public class BlockRemovedEvent implements Listener {
 					
 				TNTManager.removePlayersTNT(uuid, location, type);
 				
-				ItemStack tnt = new ItemStack(Material.TNT, 1);
-				ItemMeta tntMeta = tnt.getItemMeta();
-				tntMeta.setDisplayName((String) effect.get("displayName"));
-				tntMeta.setLore((List<String>) effect.get("lore"));
-				tnt.setItemMeta(tntMeta);
+				ItemStack tnt = TNTEffects.createTNT(effect, 1);
 				
 				location.getWorld().dropItemNaturally(location, tnt);
 				block.setType(Material.AIR);
