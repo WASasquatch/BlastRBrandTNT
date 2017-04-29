@@ -1,0 +1,328 @@
+# Default Effect File
+# You can use this as your template for custom TNT. 
+# Name the file the same as the effect name, but in lowercase
+# Effect name should be UPPERCASE
+
+# Effect name
+# This MUST be the same as the filename, in uppercase
+effect-name: CLUSTER_DROP
+
+# Items Display Name
+# Default: TNT
+display-name: 'TNT'
+
+# Items Lore
+# Default: null
+lore:
+ - '&7Cluster TNT&r'
+ - '&7Dropped Charge'
+ 
+# TNT Texture Value
+# This is the short integer value for your texture
+# Default: 1
+tnt-texture-value: 1
+
+# Vault Cost
+# Default: 10.00
+cost: 10.00
+
+# Vault Worth
+# Default: 0.1
+worth: 7.50
+
+# Can Buy/Give
+tnt-receivable: false
+
+# Fuse Ticks
+# Default: 80
+fuse-ticks: 40
+
+# Fuse Sound
+# Default: ENTITY_TNT_PRIMED 
+fuse-effect: ENTITY_FIREWORK_LAUNCH
+
+# Fuse Sound Pitch
+# Range 0.5 - 2.0
+# Default: (float) 1
+fuse-effect-pitch: 0.5
+
+# Fuse Sound Volume
+# Range 0 - 12.0
+# Default: (float) 1
+fuse-effect-volume: 3.0
+
+# Explosion Volume (Not Implemented)
+# See: https://bukkit.org/threads/playsound-parameters-volume-and-pitch.151517/
+# Default: 2
+sound-explosion-volume: 3
+
+# Temper Proof
+# If a TNT is Tmper Proof anyone that is NOT the 
+# placer will ignite it upon attempting to remove
+# Default: false
+tamper-proof: false
+
+# TNT Water Damage
+# TNT isn't a dud in water
+# Experiemental!
+# Default: false
+tnt-water-damage: true
+
+# Tossable TNT
+# Is this TNT Tossable?
+# Experiemental! - Cannot use with remote detonation
+# Default: false
+tnt-tossable: true
+
+# Tossable height gain
+# This is how heigh a tossed item will be tossed
+# Default: 3
+tnt-tossable-height: 3
+
+# Tossable Force
+# This the power behind a throw
+# Max force 0 - 5.0
+# Default: 1.5
+tnt-tossable-force: 0.5
+
+# Tossable Cooldwon in Seconds
+tnt-tossable-cooldown: 5
+
+# TNT Cluster Effect
+# TNT will explode and launch more TNT
+# Experiemental!
+# Default: false
+tnt-cluster-effect: true
+
+# TNT Cluster Effect Tyupe
+# Default: DEFAULT
+# Remember to change this to an existing
+# Type if you remove/change default.yml
+tnt-cluster-effect-type: DEFAULT
+
+# TNT Cluster Effect Amount
+# How many TNT spawn from cluster effect
+# Default: 3
+tnt-cluster-effect-amount: 3
+
+# TNT Cluster Height Offset
+# Effects how far cluster drops fire from the
+# source of the explosion.
+# Range 0.2 - 1.0 (For good effect)
+# Default: 0.65
+tnt-cluster-effect-height-offset: 0.65
+
+# TNT Remote Detonation
+# Default: false
+remote-detonation: false
+
+# Detonator Texture Value
+# This is the short integer value for your texture
+# Default: 1
+detonator-texture-value: 1
+
+# Remote Detonator Material
+# Default: STONE_BUTTON
+remote-detonator-material: STONE_BUTTON
+
+# Detonator Effect Sound
+# Default: BLOCK_NOTE_PLING
+detonator-effect: BLOCK_NOTE_PLING
+
+# Detonator Sound Pitch
+# Range 0.5 - 2.0
+# Default: (float) 1.5
+detonator-effect-pitch: 1.5
+
+# Detonaor Sound Volume
+# Range 0 - 12.0
+# Default: (float) 1
+detonator-effect-volume: 1.0
+
+# Allow fires to randomly spawn from TNT
+# Default: true
+blast-fires: true
+
+# Allow smoke to spawn randomly from TNT
+# Performance Impact
+# Default: false
+blast-smoke: false
+
+# Obliterate Obliterables
+# All objects to obliterate will not drop their 
+# items naturally.
+# Default: false
+obliterate-obliterables: false
+
+# Elliptical Radius
+# Default: true
+elliptical-radius: true
+
+# Blast Yield Multiplier
+# This is the Base Yield multiplied by this value
+# Larger the multiplier, the more of a impact it 
+# Will have on performance
+# Default: 1 (Normal Explosion)
+# Value of 0 would be no vanilla blocks removed outside 
+# material lists
+blast-yield-multiplier: 1.0
+
+# Blast Radius in Blocks
+# Larger the radius, the more of a impact it 
+# has on performance
+# Valid Radiuses: 5 - 50
+# Default: 10
+blast-radius: 10
+
+# Fire Radius in Blocks
+# Valid Radiuses: 5 - 50
+# Default: 9
+fire-radius: 9
+
+# Smoke particle count per spawn
+# More particles = more of a impact on 
+# performance
+smoke-count: 10
+
+# Smoke X,Y,Z Offset
+# Defauilt: 0.25
+smoke-offset: 0.25
+
+# Do Explosion Effects
+potion-effect: true
+
+show-potion-message: true
+
+potion-message: '&1You have been &2effected &1with &c{TYPE} &1for &6{TIME} &rseconds'
+
+# Explosion Player Effects
+# 
+# Effect_Name:
+#   type: PotionEffectType
+#   duration: IN_TICKS
+#   amplifier: DOUBLE
+#   ambient: true/false
+#   particles: true/false
+#   color: COLOR
+#
+# For PotionEffectType's see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+# For Color's see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Color.html
+#
+potion-effects:
+  Blindness:
+    type: BLINDNESS
+    duration: 30
+    amplifier: 1
+    ambient: false
+    particles: false
+    color: null
+  SlowDown:
+    type: SLOW
+    duration: 180
+    amplifier: 1
+    ambient: false
+    particles: false
+    color: null
+  
+
+# Inner Radius Materials
+# For doubling chances of type, just add it 
+# twice, or three times... or? 
+inner-blast-materials:
+ - AIR
+ - GRAVEL
+ - COBBLESTONE 
+ 
+# Outer Blast Radius Materials
+outer-blast-materials:
+ - GRAVEL
+ - DIRT
+ 
+# Protected Materials
+# These materials will not be touched at all
+# This includes the random fire spawns (Except 
+# form fire spread)
+protected-materials:
+ - BEDROCK
+ - WATER
+ - LAVA
+ - STATIONARY_LAVA
+ - STATIONARY_WATER
+ - TNT
+ - EXPLOSIVE_MINECART
+ - ARMOR_STAND
+ - BREWING_STAND
+ - CHEST
+ - ENDER_CHEST
+ - STRUCTURE_BLOCK
+ - COMMAND
+ - COMMAND_CHAIN
+ - COMMAND_MINECART
+ - COMMAND_REPEATING
+ - IRON_ORE
+ - DIAMOND_ORE
+ - COAL_ORE
+ - GOLD_ORE
+ - EMERALD_ORE
+ - IRON_BLOCK
+ - IRON_FENCE
+ - IRON_DOOR_BLOCK
+ - IRON_DOOR
+ - IRON_PLATE
+ - IRON_TRAPDOOR
+ - GOLD_BLOCK
+ - DIAMOND_BLOCK
+ - OBSIDIAN
+ - DISPENSER
+ - DROPPER
+ - OBSERVER
+ - REDSTONE
+ - REDSTONE_WIRE
+ - LEVER
+ - STONE_BUTTON
+
+# Obliterate Outer Materials
+# These materials will be set to AIR
+# Subsequently they will break naturally if 
+# obliterate-obliterables is false
+# AIR for NONE
+obliterate-materials:
+ - REDSTONE_COMPARATOR
+ - REDSTONE_COMPARATOR_OFF
+ - REDSTONE_COMPARATOR_ON
+ - REDSTONE_LAMP_OFF
+ - REDSTONE_LAMP_ON
+ - REDSTONE_ORE
+ - REDSTONE_TORCH_OFF
+ - REDSTONE_TORCH_ON
+ - REDSTONE_WIRE
+ - YELLOW_FLOWER
+ - LONG_GRASS
+ - FLOWER_POT
+ - DEAD_BUSH
+ - PUMPKIN_STEM
+ - SAPLING
+ - TRAP_DOOR
+ - ACACIA_DOOR
+ - ACACIA_DOOR_ITEM
+ - ACACIA_FENCE
+ - ACACIA_FENCE_GATE
+ - ACACIA_STAIRS
+ - BIRCH_DOOR
+ - BIRCH_DOOR_ITEM
+ - BIRCH_FENCE
+ - BIRCH_FENCE_GATE
+ - BIRCH_WOOD_STAIRS
+ - BOAT
+ - BOAT_ACACIA
+ - BOAT_BIRCH
+ - BOAT_DARK_OAK
+ - BOAT_JUNGLE
+ - BOAT_SPRUCE
+ - DARK_OAK_DOOR
+ - DARK_OAK_DOOR_ITEM
+ - DARK_OAK_FENCE
+ - DARK_OAK_FENCE_GATE
+ - DARK_OAK_STAIRS
+ - SIGN
+ - SIGN_POST

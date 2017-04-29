@@ -71,17 +71,23 @@ public class TNTEffectsManager {
 	
 	private static TNTEffectsManager instance = new TNTEffectsManager();
 	
-	private JavaPlugin plugin;
-	private PotionEffectsManager potionEffectsManager;
+	public static TNTEffectsManager getInstance() {
+		return instance;
+	}
+	private HashMap<String, Color> colors;
 	
 	private Map<String, String> displayNames;
 	private Map<String, Map<String, Object>> effects;
+	private HashMap<String, PotionEffectType> effectTypes;
+	
+    private JavaPlugin plugin;
+    private PotionEffectsManager potionEffectsManager;
+	
 	private Map<String, String> remoteDetonators;
 	
-    private HashMap<String, Color> colors;
-    private HashMap<String, PotionEffectType> effectTypes;
+	// Code snippet from SethBling
 	
-	private TNTEffectsManager() {
+    private TNTEffectsManager() {
 		effects = new HashMap<String, Map<String, Object>>();
 		displayNames = new HashMap<String, String>();
 		remoteDetonators = new HashMap<String, String>();
@@ -119,9 +125,7 @@ public class TNTEffectsManager {
 	    };
 		loadDefaultEffects();
 	}
-	
-	// Code snippet from SethBling
-	
+ 
     private Vector calculateVelocity(Vector from, Vector to, int heightGain) {
         // Gravity of a potion | 115
         double gravity = 0.115;
@@ -161,12 +165,6 @@ public class TNTEffectsManager {
  
         return new Vector(vx, vy, vz);
     }
- 
-    private double distanceSquared(Vector from, Vector to) {
-        double dx = to.getBlockX() - from.getBlockX();
-        double dz = to.getBlockZ() - from.getBlockZ();
-        return dx * dx + dz * dz;
-    }
     
     // End code snippet from SethBling
     
@@ -181,20 +179,13 @@ public class TNTEffectsManager {
 		return detonator;
     }
     
-    @SuppressWarnings("unchecked")
-	public ItemStack createTNT(Map<String, Object> effect, int amount) {
-    	if ( effect == null ) return null;
-    	if ( amount <= 0 ) amount = 1;
-    	if ( amount > 64 ) amount = 64;
-		ItemStack tnt = new ItemStack(Material.TNT, amount, (short) effect.get("explosiveTexture"));
-		ItemMeta tntMeta = tnt.getItemMeta();
-        tntMeta.setUnbreakable(true);
-        tntMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-		tntMeta.setDisplayName((String) effect.get("displayName"));
-		tntMeta.setLore((List<String>) effect.get("lore"));
-		tnt.setItemMeta(tntMeta);
-    	return tnt;
-    }
+    public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch) {
+		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null, true);
+	}
+	
+	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, boolean doSound) {
+		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null, doSound);
+	}
 	
 	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, Vector velocity, boolean doSound) {
 		Location center = location.add(0.5,0.5,0.5);
@@ -218,13 +209,20 @@ public class TNTEffectsManager {
 		return tnt;
 	}
 	
-	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch, boolean doSound) {
-		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null, doSound);
-	}
-	
-	public TNTPrimed createPrimedTNT(Map<String, Object> effect, Location location, Float multiplier, int ticks, Sound sound, float volume, float pitch) {
-		return createPrimedTNT(effect, location, multiplier, ticks, sound, volume, pitch, null, true);
-	}
+	@SuppressWarnings("unchecked")
+	public ItemStack createTNT(Map<String, Object> effect, int amount) {
+    	if ( effect == null ) return null;
+    	if ( amount <= 0 ) amount = 1;
+    	if ( amount > 64 ) amount = 64;
+		ItemStack tnt = new ItemStack(Material.TNT, amount, (short) effect.get("explosiveTexture"));
+		ItemMeta tntMeta = tnt.getItemMeta();
+        tntMeta.setUnbreakable(true);
+        tntMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+		tntMeta.setDisplayName((String) effect.get("displayName"));
+		tntMeta.setLore((List<String>) effect.get("lore"));
+		tnt.setItemMeta(tntMeta);
+    	return tnt;
+    }
 	
 	public String displayNameToType(String name) {
 		if ( hasDisplayName(name) ) {
@@ -233,8 +231,101 @@ public class TNTEffectsManager {
 		return null;
 	}
 	
+	private double distanceSquared(Vector from, Vector to) {
+        double dx = to.getBlockX() - from.getBlockX();
+        double dz = to.getBlockZ() - from.getBlockZ();
+        return dx * dx + dz * dz;
+    }
+	
+	public List<String> getCatalog() {
+		List<String> catalog = new ArrayList<String>();
+		VaultInterface vault = new VaultInterface();
+		catalog.add(ChatColor.translateAlternateColorCodes('&', "&6|--------------{ "+plugin.getConfig().getString("local.catalog-title", "&4BlastR Brand TNT &r- &7Catalog")+"&r &6}--------------|"));
+		boolean found = false;
+		if ( displayNames.size() > 0 ) {
+			for ( Map.Entry<String, String> entry : displayNames.entrySet() ) {
+				if ( ! ( hasEffect(entry.getValue()) ) ) continue;
+				found = true;
+				Map<String, Object> effect = getEffect(entry.getValue());
+				String listing = ChatColor.translateAlternateColorCodes('&', "&a"+vault.format((double)effect.get("vaultCost"))+" &6| &r"+entry.getKey()+" &6- &r"+entry.getValue());
+				catalog.add(listing);
+			}
+		}
+		if ( ! found ) {
+			catalog.add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.catalog-empty", "&7Catalog is empty...")));
+		}
+		StringBuilder catEnd = new StringBuilder();
+		catEnd.append("&6|");
+		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length(); i++ ) {
+			catEnd.append("-");
+		}
+		catEnd.append("|");
+		catalog.add(ChatColor.translateAlternateColorCodes('&', catEnd.toString()));
+		return catalog;
+	}
+	
+	public Map<String, Object> getEffect(String effect) {
+		if ( effects.containsKey(effect) ) {
+			return effects.get(effect);
+		}
+		return null;
+	}
+	
+	public Set<Entity> getEntitiesInChunks(Location location, int radius) {
+		Block b = location.getBlock();
+		Set<Entity> entities = new HashSet<Entity>();
+		for ( int x = -16 * radius; x <= 16 * radius; x += 16 ) {
+			for ( int z = -16 * radius; z <= 16 * radius; z += 16 ) {
+				for ( Entity e : b.getRelative(x, 0, z).getChunk().getEntities() ) {
+					entities.add(e);
+				}
+			}
+		}
+		return entities;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getLore(String effect) {
+		if ( hasEffect(effect) ) {
+			return (List<String>) effects.get(effect).get("lore");
+		}
+		return new ArrayList<String>();
+	}
+	
+	public List<Location> getRandomLocation(Location center, int radius, int amount) {
+		Random rand = new Random();
+		List<Location> locations = new ArrayList<Location>();
+		for ( int i = 1; i <= amount; i++ ) {
+			double angle = rand.nextDouble()*360;
+			double x = center.getX() + (rand.nextDouble()*radius*Math.cos(Math.toRadians(angle)));
+			double y = center.getY() + (rand.nextDouble()*radius*Math.cos(Math.toRadians(angle)));
+			double z = center.getZ() + (rand.nextDouble()*radius*Math.sin(Math.toRadians(angle)));
+			Location relLoc = new Location(center.getWorld(), x, y, z);
+			Location location = center.getWorld().getHighestBlockAt(relLoc).getLocation();
+			locations.add(location);
+		}
+		return locations;
+	}
+	
+	public Location getTargetBlock(Location location, int range) {
+		BlockIterator iter = new BlockIterator(location, range);
+		Block lastBlock = iter.next();
+		while (iter.hasNext()) {
+			lastBlock = iter.next();
+			if (lastBlock.getType() != Material.AIR) {
+				continue;
+			}
+			break;
+		}
+		return lastBlock.getLocation();
+    }
+	
 	public boolean hasDisplayName(String name) {
 		return displayNames.containsKey(name);
+	}
+	
+	public boolean hasEffect(String effect) {
+		return (effect == null) ? false : effects.containsKey(effect);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -245,8 +336,82 @@ public class TNTEffectsManager {
 		return false;
 	}
 	
-	public boolean hasEffect(String effect) {
-		return (effect == null) ? false : effects.containsKey(effect);
+	public boolean isRemoteDetonator(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		if ( ! ( meta.hasDisplayName() ) ) return false;
+		if ( ! ( remoteDetonators.containsKey(meta.getDisplayName()) ) ) return false;
+		return true;
+	}
+	
+	private void loadDefaultEffects() {
+		
+		String effectsPath = Bukkit.getPluginManager().getPlugin("BlastRadius").getDataFolder().getAbsolutePath() + File.separator + "effects" + File.separator;
+		File effectsDir = new File(effectsPath);
+		
+		File defaultEffect = new File(effectsPath + "default.yml");
+		File defaultEffectNuke = new File(effectsPath + "nuke.yml");
+		File defaultEffectCluster = new File(effectsPath + "cluster.yml");
+		File defaultEffectClusterDrop = new File(effectsPath + "cluster_drop.yml");
+		File defaultEffectCryobomb = new File(effectsPath + "cryobomb.yml");
+		File defaultEffectC4 = new File(effectsPath + "c4.yml");
+		
+		if ( ! (effectsDir.exists() ) ) {
+			effectsDir.mkdirs();
+		}
+		
+		if ( ! ( plugin.getConfig().getBoolean("no-default-effects") ) ) {
+		
+			if ( ! ( defaultEffect.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/default.yml", false);
+			}
+			
+			if ( ! ( defaultEffectNuke.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/nuke.yml", false);
+			}
+			
+			if ( ! ( defaultEffectCluster.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster.yml", false);
+			}
+			
+			if ( ! ( defaultEffectClusterDrop.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster_drop.yml", false);
+			}
+			
+			if ( ! ( defaultEffectC4.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/c4.yml", false);
+			}
+			
+			if ( ! ( defaultEffectCryobomb.exists() ) ) {
+				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cryobomb.yml", false);
+			}
+
+		}
+		
+		try(Stream<Path> paths = Files.walk(Paths.get(effectsPath))) {
+		    paths.forEach(filePath -> {
+		        if ( Files.isRegularFile(filePath) ) {
+		        	
+		        	String ext = "";
+		        	
+		        	int i = filePath.toString().lastIndexOf('.');
+		        	if (i > 0) {
+		        	    ext = filePath.toString().substring(i+1);
+		        	}
+		        	
+		        	if ( ext.equalsIgnoreCase("yml") ) {
+		        		
+		        		File effectFile = new File(filePath.toString());
+		        		
+		        		loadEffect(effectFile);
+		        	
+		        	}
+		        }
+		    });
+		    
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void loadEffect(File effectFile) {
@@ -562,171 +727,6 @@ public class TNTEffectsManager {
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void loadDefaultEffects() {
-		
-		String effectsPath = Bukkit.getPluginManager().getPlugin("BlastRadius").getDataFolder().getAbsolutePath() + File.separator + "effects" + File.separator;
-		File effectsDir = new File(effectsPath);
-		
-		File defaultEffect = new File(effectsPath + "default.yml");
-		File defaultEffectNuke = new File(effectsPath + "nuke.yml");
-		File defaultEffectCluster = new File(effectsPath + "cluster.yml");
-		File defaultEffectClusterDrop = new File(effectsPath + "cluster_drop.yml");
-		File defaultEffectCryobomb = new File(effectsPath + "cryobomb.yml");
-		File defaultEffectC4 = new File(effectsPath + "c4.yml");
-		
-		if ( ! (effectsDir.exists() ) ) {
-			effectsDir.mkdirs();
-		}
-		
-		if ( ! ( plugin.getConfig().getBoolean("no-default-effects") ) ) {
-		
-			if ( ! ( defaultEffect.exists() ) ) {
-				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/default.yml", false);
-			}
-			
-			if ( ! ( defaultEffectNuke.exists() ) ) {
-				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/nuke.yml", false);
-			}
-			
-			if ( ! ( defaultEffectCluster.exists() ) ) {
-				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster.yml", false);
-			}
-			
-			if ( ! ( defaultEffectClusterDrop.exists() ) ) {
-				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cluster_drop.yml", false);
-			}
-			
-			if ( ! ( defaultEffectC4.exists() ) ) {
-				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/c4.yml", false);
-			}
-			
-			if ( ! ( defaultEffectCryobomb.exists() ) ) {
-				Bukkit.getServer().getPluginManager().getPlugin("BlastRadius").saveResource("effects/cryobomb.yml", false);
-			}
-
-		}
-		
-		try(Stream<Path> paths = Files.walk(Paths.get(effectsPath))) {
-		    paths.forEach(filePath -> {
-		        if ( Files.isRegularFile(filePath) ) {
-		        	
-		        	String ext = "";
-		        	
-		        	int i = filePath.toString().lastIndexOf('.');
-		        	if (i > 0) {
-		        	    ext = filePath.toString().substring(i+1);
-		        	}
-		        	
-		        	if ( ext.equalsIgnoreCase("yml") ) {
-		        		
-		        		File effectFile = new File(filePath.toString());
-		        		
-		        		loadEffect(effectFile);
-		        	
-		        	}
-		        }
-		    });
-		    
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public List<String> getCatalog() {
-		List<String> catalog = new ArrayList<String>();
-		VaultInterface vault = new VaultInterface();
-		catalog.add(ChatColor.translateAlternateColorCodes('&', "&6|--------------{ "+plugin.getConfig().getString("local.catalog-title", "&4BlastR Brand TNT &r- &7Catalog")+"&r &6}--------------|"));
-		boolean found = false;
-		if ( displayNames.size() > 0 ) {
-			for ( Map.Entry<String, String> entry : displayNames.entrySet() ) {
-				if ( ! ( hasEffect(entry.getValue()) ) ) continue;
-				found = true;
-				Map<String, Object> effect = getEffect(entry.getValue());
-				String listing = ChatColor.translateAlternateColorCodes('&', "&a"+vault.format((double)effect.get("vaultCost"))+" &6| &r"+entry.getKey()+" &6- &r"+entry.getValue());
-				catalog.add(listing);
-			}
-		}
-		if ( ! found ) {
-			catalog.add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("local.catalog-empty", "&7Catalog is empty...")));
-		}
-		StringBuilder catEnd = new StringBuilder();
-		catEnd.append("&6|");
-		for ( int i = 1; i <= ChatColor.stripColor(catalog.get(0)).length(); i++ ) {
-			catEnd.append("-");
-		}
-		catEnd.append("|");
-		catalog.add(ChatColor.translateAlternateColorCodes('&', catEnd.toString()));
-		return catalog;
-	}
-	
-	public Map<String, Object> getEffect(String effect) {
-		if ( effects.containsKey(effect) ) {
-			return effects.get(effect);
-		}
-		return null;
-	}
-	
-	public Set<Entity> getEntitiesInChunks(Location location, int chunkRadius) {
-	    Block b = location.getBlock();
-	    Set<Entity> entities = new HashSet<Entity>();
-	    for (int x = -16 * chunkRadius; x <= 16 * chunkRadius; x += 16) {
-	        for (int z = -16 * chunkRadius; z <= 16 * chunkRadius; z += 16) {
-	            for (Entity e : b.getRelative(x, 0, z).getChunk().getEntities()) {
-	                entities.add(e);
-	            }
-	        }
-	    }
-	    return entities;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<String> getLore(String effect) {
-		if ( hasEffect(effect) ) {
-			return (List<String>) effects.get(effect).get("lore");
-		}
-		return new ArrayList<String>();
-	}
-	
-	public static TNTEffectsManager getInstance() {
-		return instance;
-	}
-	
-	public List<Location> getRandomLocation(Location center, int radius, int amount) {
-		Random rand = new Random();
-		List<Location> locations = new ArrayList<Location>();
-		for ( int i = 1; i <= amount; i++ ) {
-			double angle = rand.nextDouble()*360;
-			double x = center.getX() + (rand.nextDouble()*radius*Math.cos(Math.toRadians(angle)));
-			double y = center.getY() + (rand.nextDouble()*radius*Math.cos(Math.toRadians(angle)));
-			double z = center.getZ() + (rand.nextDouble()*radius*Math.sin(Math.toRadians(angle)));
-			Location relLoc = new Location(center.getWorld(), x, y, z);
-			Location location = center.getWorld().getHighestBlockAt(relLoc).getLocation();
-			locations.add(location);
-		}
-		return locations;
-	}
-	
-	public Location getTargetBlock(Location location, int range) {
-		BlockIterator iter = new BlockIterator(location, range);
-		Block lastBlock = iter.next();
-		while (iter.hasNext()) {
-			lastBlock = iter.next();
-			if (lastBlock.getType() != Material.AIR) {
-				continue;
-			}
-			break;
-		}
-		return lastBlock.getLocation();
-    }
-	
-	public boolean isRemoteDetonator(ItemStack item) {
-		ItemMeta meta = item.getItemMeta();
-		if ( ! ( meta.hasDisplayName() ) ) return false;
-		if ( ! ( remoteDetonators.containsKey(meta.getDisplayName()) ) ) return false;
-		return true;
 	}
 	
 	public TNTPrimed playerTossTNT(Map<String, Object> effect, Player player) {
